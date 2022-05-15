@@ -1,19 +1,19 @@
 function [population] = fNSDE_LSHADE44(problem)%
-% problem.epsim : 忽略等式约束的限度，此约束多模态问题集不包含等式约束
-% problem.func_num ： 目标函数编号
-% problem.dim ： 决策变量维度
-% problem.func ： 目标函数句柄，调用形式为[f,g,h]=problem.func(X),其中f,g,h 分别为决策变量X的目标函数值、不等式约束函数值、等式约束函数值。
-% problem.max_fes ： 目标函数最大评估次数
-% problem.lower_bound ： 决策变量下界向量，维度为problem.dim
-% problem.upper_bound ： 决策变量上界向量，维度为problem.dim
-% problem.radius ： 判断全局最优变量是否重复半径,距离计算形式为欧式距离
+% problem.epsim : degree of ignoring equality constraints
+% problem.func_num: index of objective function
+% problem.dim : problem dimension
+% problem.func : problem pointer, e.g. [f,g,h]=problem.func(X)
+% problem.max_fes : max evaluation number
+% problem.lower_bound : lower_bound, dim is problem.dim
+% problem.upper_bound : upper_bound, dim is problem.dim
+% problem.radius : radius to judge convergence
 func=problem.func;
 Dim=problem.dim;
 Max_Gen=problem.max_fes;
 xmin=problem.lower_bound(1);
 xmax=problem.upper_bound(1);
 func_num=problem.func_num;
-%binomialni a exponencialni krizeni soutezi ale jen v jedne generaci
+% Ninit for linearly population decreasing
 N_init=floor(60*sqrt(Dim));
 N_min = floor(N_init/2);
 ps=N_init;
@@ -23,7 +23,7 @@ max_velikost_archivu=round(ps*2.6);
  maxiter=Max_Gen;
  evals=ps;
  D=Dim;
- H=6;
+ H=6; % historical circle memories
 
  h=4;
  n0=2;
@@ -34,7 +34,7 @@ max_velikost_archivu=round(ps*2.6);
  Xmax=repmat(xmax,1,D);
  Xmin=repmat(Xmin,ps,1);
  Xmax=repmat(Xmax,ps,1);
-%  
+ % init population
  pos=Xmin+(Xmax-Xmin).*rand(ps,D);
  P=zeros(ps,D+2);
  P(:,1:D)=pos;
@@ -71,6 +71,7 @@ P(:,D+2) = sum_vio(gval,hval,problem.epsim);
     
     strategie=zeros(1,ps);
     
+    % set all s_f and s_c empty
     SCRpbin=[];SFpbin=[];
     SCRpexp=[];SFpexp=[];
     SCRprlbin=[];SFprlbin=[];
@@ -88,12 +89,12 @@ P(:,D+2) = sum_vio(gval,hval,problem.epsim);
     
     species = getSpecies(P(:,1:D),P(:,D+1),P(:,D+2),nspecies);
     Q=zeros(ps,D+2);
-    for i=1:ps  %VYTVORENI DALSI GENERACE
-        [hh,p_min]=roulete(ni);
-        if p_min<delta
+    for i=1:ps  % for each individual
+        [hh,p_min]=roulete(ni); % competition of four strategies
+        if p_min<delta % reset to starting values
             ni=zeros(1,h)+n0;
-        end  %reset
-        r=randi(H) ;%        r=1+fix(H*rand(1)); 
+        end
+        r=randi(H) ; % random selector for circular memory (store mean of f and cr)
 
         sameSpecies = find(species==species(i)); 
         for try_num = 1:4
@@ -103,34 +104,41 @@ P(:,D+2) = sum_vio(gval,hval,problem.epsim);
                     if MCRpbin(1,r)==-1
                         CR=0;
                     else
+                        % generate CR in N(MCR, 0.1)
                         CR=MCRpbin(1,r)+ sqrt(0.1)*randn(1);
                     end
+                    % clip CR
                     if CR>1
                         CR=1;
                     else if CR<0
-                            CR=0;
-                    end
+                     end
                     end
                     F=-1;
+                    % generate F from Cauchy(MF, 0.1) until bigger than 0
                     while F<=0
                         F=rand*pi-pi/2;
                         F=0.1 * tan(F) + MFpbin(1,r);
                     end
+                    % clip F
                     if F>1 || isnan(F)
                         F=1;
                     end
                     %             p = pmin+ (0.2-pmin) * rand;
                     %ppoc=round(p*ps);
+                    % choose 100p% best points
                     ppoc=round(p*nspecies );
                     if ppoc==0
                         ppoc=1;
                     end
+                    % put into Sf and Sc
                     Fpole(1,i)=F;
                     CRpole(1,i)=CR;
 
                     %y=currenttopbestbin_izrc_cons(A,velarchivu,P(:,1:D),P(:,D+1),P(:,D+2),ppoc,F,CR,i,xmin,xmax);
+                    % generate mutant vector
                     y=currenttopbestbin_izrc_cons(A,velarchivu,P(sameSpecies,1:D),P(sameSpecies,D+1),P(sameSpecies,D+2),ppoc,F,CR,find(sameSpecies==i),xmin,xmax);
                     %poskon(i,:)=y;
+                    % Q: result individual with fitness and violation
                     Q(i,1:D) = y;
                     [Q(i,D+1),gval,hval] = func(y);
                     Q(i,D+2) = sum_vio(gval,hval,problem.epsim);
@@ -232,6 +240,7 @@ P(:,D+2) = sum_vio(gval,hval,problem.epsim);
                     Q(i,D+2) = sum_vio(gval,hval,problem.epsim);
 
             end
+            % if result are the same, then increase strategy num by one
             if P(i,D+1)==Q(i,D+1) && P(i,D+2)==Q(i,D+2)
                 hh = mod(hh,4)+1;
             else
@@ -240,21 +249,22 @@ P(:,D+2) = sum_vio(gval,hval,problem.epsim);
         end
 
     end
-    % zjisteni, jak jsou na tom prvky Q
+    % ps: population size (dynamic adjusted)
     isImprove=zeros(1,ps); 
     for i=1:ps
         if  Q(i,D+2)==0 && P(i,D+2)==0
             if Q(i,D+1)< P(i,D+1)
-                % nahrad - y je uspesny
+                % Q has greater fitness without valiation
                 isImprove(i)=1;
             end
         elseif Q(i,D+2) < P(i,D+2)
-            % nahrad
+            % Q has less violation
             isImprove(i)=1;
         end
     end
     for i=1:ps
        if isImprove(i)==1 
+            % if improve, then store difference and Sf, Sc
             switch  strategie(1,i) 
                 case 1
                     if Q(i,D+2)==0 && P(i,D+2)==0
@@ -294,6 +304,7 @@ P(:,D+2) = sum_vio(gval,hval,problem.epsim);
                     SCRprlexp=[SCRprlexp,CRpolerlexp(1,i)];
                     SFprlexp=[SFprlexp,Fpolerlexp(1,i)];
             end
+            % if archive is not full, then put; else randomly override
             if velarchivu < max_velikost_archivu
                 A=[A;P(i,1:D)];
                 velarchivu=velarchivu+1;
@@ -302,14 +313,19 @@ P(:,D+2) = sum_vio(gval,hval,problem.epsim);
                 A(ktere,:)=P(i,1:D);
             end
             P(i,:)=Q(i,:);
-            ni(strategie(1,i))=ni(strategie(1,i))+1;         % zmena prsti qi 
+            ni(strategie(1,i))=ni(strategie(1,i))+1; % increase the number of strategy's success by one
        end
     end
     
+    % if strategy used, then update circle memories
     if uspesnychpbin>0 
+        % find which individual improved
         platne=find(deltafcepbin~=-1);
+        % improve degree
         delty=deltafcepbin(1,platne);
+        % sum of improve degree
         suma=sum(delty);
+        % normalized improve degree
         vahyw=1/suma*delty;
         mSCRpbin=max(SCRpbin);
         if MCRpbin(1,kpbin)==-1  ||  mSCRpbin==0
@@ -388,12 +404,15 @@ P(:,D+2) = sum_vio(gval,hval,problem.epsim);
     
     ps_minule=ps;
     ps=round(((N_min-N_init)/maxiter)*evals+N_init);
+    % if decrease population size, then select inferior one
     if ps<ps_minule
         P=sortrows(P,D+1);
         P=sortrows(P,D+2);
-       %minimalizuju violation ale stejne tridim i podle fmin
+        % remove least one
         P=P(1:ps,:);
+        % max archive size
         max_velikost_archivu=round(ps*2.6);
+        % if archive size greater than max size, then randomly remove one
         while velarchivu > max_velikost_archivu
             index_v_arch=randi(velarchivu);
             A(index_v_arch,:)=[];
@@ -408,6 +427,10 @@ end
 
 
 function result=keep_range(y,xi,a,b)
+%% y: mutated individual
+%% xi: origin individual
+%% a: lower bound
+%% b: upper bound
 delka=length(y);
 for i=1:delka
     if (y(i)<a)||(y(i)>b)
@@ -422,14 +445,14 @@ result=y;
 end
 function [species] = getSpecies(population,fitness,conV,nSpecies)
 NP = size(population,1);
-[~,rank] = sort(fitness + 1e100*conV);
+[~,rank] = sort(fitness + 1e100*conV); % conv: violation, add penalty
 species = zeros(1,NP);
 speciesNum=floor(NP/nSpecies);
 for i = 1:speciesNum
-    besti = rank(find(~species(rank),1,'first'));
+    besti = rank(find(~species(rank),1,'first')); % find first non-species element with highest score
     species(besti) = i;
     for j = 2:nSpecies
-        nn = getNN(population(besti,:),population,species);
+        nn = getNN(population(besti,:),population,species); % get a non-species individual with minimum distance
         if nn == 0 
             break
         end
@@ -484,6 +507,7 @@ r2=trivybrane(2,1:d);
 r3=trivybrane(3,1:d);
 v=r1+F*(r2-r3);
 
+% exp style
 L=1+fix(d*rand(1));  % starting position for crossover
 change=L;
 position=L;
@@ -498,19 +522,30 @@ end
 y(change)=v(change);
 end
 function y=derand_RLe_cons(P,hodf,hodviol,F,CR,expt,species)
-N=length(P(:,1));
-d=length(P(1,:));
+%%
+%% P: individuals
+%% hodf: fitness
+%% hodviol: violation
+%% p: first p% species
+%% F: scale parameter
+%% CR: probability parameter
+%% i: ??
+%% xmin, xmax: lower bound, upper bound
+%%
+N=length(P(:,1)); % population size
+d=length(P(1,:)); % dimension
 % prd1=size(P)
 % prd=expt(1)
 y=P(expt(1),1:d);
 pool=find(species==species(expt));
 pool(pool==expt)=[];
 %vyb=nahvyb_expt(N,3,expt);	% three random points without expt
-vyb=pool(randperm(length(pool),3));
-r123=P(vyb,:);
-hodf123=hodf(vyb);
-hodviol123=hodviol(vyb);
+vyb=pool(randperm(length(pool),3)); % random choose three point except slected one
+r123=P(vyb,:); % three individuals
+hodf123=hodf(vyb); % three fitnesses
+hodviol123=hodviol(vyb); % three violations
 
+% combine and sort according to fitness and violation
 trivybrane=[r123 hodf123 hodviol123];
 trivybrane=sortrows(trivybrane,d+1); 
 trivybrane=sortrows(trivybrane,d+2); 
@@ -527,6 +562,7 @@ r2=trivybrane(2,1:d);
 r3=trivybrane(3,1:d);
 v=r1+F*(r2-r3);
 
+% bin style
 change=find(rand(1,d)<CR);
 if isempty(change) % at least one element is changed
     change=1+fix(d*rand(1));
@@ -534,17 +570,31 @@ end
 y(change)=v(change);
 end
 function y=currenttopbestexp_izrc_cons(AR,velarch,PO,hodf,hodviol,p,F,CR,expt,a,b)
-N=length(PO(:,1));
-d=length(PO(1,:));
+%%
+%% A: archive
+%% velarch: archive length
+%% P0: individuals
+%% hodf: fitness
+%% hodviol: violation
+%% p: first p% species
+%% F: scale parameter
+%% CR: probability parameter
+%% i: ??
+%% xmin, xmax: lower bound, upper bound
+%%
+N=length(PO(:,1)); % population size
+d=length(PO(1,:)); % dimension
 
-pom=zeros(N,d+2);
+pom=zeros(N,d+2); % individual, fitness, violation
 pom(:,1:d)=PO;
 pom(:,d+1)=hodf;
 pom(:,d+2)=hodviol;
 
+% sort according to fitness and violation
 pom=sortrows(pom,d+1);
 pom=sortrows(pom,d+2);
 
+% current best individual: randomly choosen from 100p%
 pbest=pom(1:p,1:d);
 ktery=1+fix(p*rand(1));
 xpbest=pbest(ktery,:);
@@ -575,6 +625,7 @@ y=xi;
 % end
 % y(change)=v(change);
 
+% select dimension to mutate, according to the value of CR
 L=1+fix(d*rand(1));  % starting position for crossover
 change=L;
 position=L;
@@ -590,40 +641,59 @@ y(change)=v(change);
 y=keep_range(y,xi,a,b);
 end
 function y=currenttopbestbin_izrc_cons(AR,velarch,PO,hodf,hodviol,p,F,CR,expt,a,b)
-N=length(PO(:,1));
-d=length(PO(1,:));
+%%
+%% A: archive
+%% velarch: archive length
+%% P0: individuals
+%% hodf: fitness
+%% hodviol: violation
+%% p: first p% species
+%% F: scale parameter
+%% CR: probability parameter
+%% expt: selected individual
+%% xmin, xmax: lower bound, upper bound
+%%
+N=length(PO(:,1)); % population size
+d=length(PO(1,:)); % dimension
 
-pom=zeros(N,d+2);
+pom=zeros(N,d+2); % individual, fitness, violation
 pom(:,1:d)=PO;
 pom(:,d+1)=hodf;
 pom(:,d+2)=hodviol;
 
+% sort according to fitness and violation
 pom=sortrows(pom,d+1);
 pom=sortrows(pom,d+2);
 
+% current best individual: randomly choosen from 100p%
 pbest=pom(1:p,1:d);
 ktery=1+fix(p*rand(1));
 xpbest=pbest(ktery,:);
 % prd1=size(PO)
 % prd=expt(1)
+% current selected individual
 xi=PO(expt(1),1:d);
 pool = [1:N];
 pool(expt) = [];
+% r1: randomly choose an individual
 vyb = pool(randi(length(pool)));
 r1=PO(vyb,:);
 expt=[expt,vyb];
 
+% r2: randomly choose an individual from P union Archive
 pool = [1:N+velarch];
 pool(expt) = [];
 vyb = pool(randi(length(pool)));
 sjed=[PO;AR];
 r2=sjed(vyb,:);
 
+% calculate mutant vector
 v=xi+F*(xpbest-xi)+F*(r1-r2);
 
+% select dimension to mutate, according to the value of CR (bin)
 y=xi;
 change=find(rand(1,d)<CR);
-if isempty(change) % at least one element is changed
+if isempty(change) % if non change, then randomly choose
     change=1+fix(d*rand(1));
 end
 y(change)=v(change);
@@ -633,6 +703,7 @@ function [res, p_min]=roulete(cutpoints)
 %
 % returns an integer from [1, length(cutpoints)] with probability proportional
 % to cutpoints(i)/ summa cutpoints
+% res: selected num, p_min: min probability
 %
 h =length(cutpoints);
 ss=sum(cutpoints);
