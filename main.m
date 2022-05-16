@@ -4,7 +4,7 @@ addpath(genpath("benchmark"));
 %% Parameters
 RunNumber = 32;
 TStart = tic;
-IfParallel = false;
+IfParallel = true;
 addpath(genpath('modification'));
 %% Create Summary object to record
 CurrentSummary = Summary('baseline', RunNumber);
@@ -13,6 +13,8 @@ CurrentSummary = Summary('baseline', RunNumber);
 for ProblemIndex = 1:18
     ProblemRun(ProblemIndex, CurrentSummary, IfParallel);
 end
+
+CurrentSummary.Finish();
 
 disp(['Total time: ', num2str(toc(TStart))]);
 %% Helper Funcion
@@ -30,6 +32,7 @@ function ProblemRun(ProblemNumber, CurrentSummary, IfParallel)
         D = parallel.pool.DataQueue;
         afterEach(D, @(x) UpdateExperimentalResult(CurrentSummary, x));
         parfor RunNumber = 1:CurrentSummary.RunNumber
+            rng('shuffle');
             [population] = fNSDE_LSHADE44(CurrentSummary, ProblemNumber);
             Results = NaN(1, 5);
             for AccuricyIndex = 1:length(CurrentSummary.Accuracies)

@@ -69,6 +69,17 @@ classdef Summary < handle
                     fullfile(obj.LogPath, obj.PeakRatioFolderName, strcat(num2str(index), '.dat')), 'Delimiter', 'tab');
             end
 
+            fprintf(f, '--------------------- Stats ---------------------\n');
+            RatioSum = 0.;
+            for index = 1:obj.ProblemTotalNum
+                if ~sum(isnan(obj.FoundedPeaks(index, :, :))) == 0; continue; end
+                CurrentMeanValue = mean(reshape(obj.FoundedPeaks(index, :, :), 1, obj.RunNumber * length(obj.Accuracies)) / obj.PeakNumbers(1, index));
+                fprintf(f, 'Problem: %d, Average Peak Ratio: %f\n', index, ...
+                    CurrentMeanValue);
+                RatioSum = RatioSum + CurrentMeanValue;
+            end
+            fprintf(f, 'Overall Average Peak Ratio: %f\n', RatioSum / obj.ProblemTotalNum);
+            fprintf(f, '--------------------- Stats ---------------------\n');
             fclose(f);
         end
         
