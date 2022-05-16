@@ -1,5 +1,5 @@
-function [population] = fNSDE_LSHADE44(problem)%
-% problem.epsim : degree of ignoring equality constraints
+function [population] = fNSDE_LSHADE44(CurrentSummary, func_num)%
+% CurrentSummary.Epsim : degree of ignoring equality constraints
 % problem.func_num: index of objective function
 % problem.dim : problem dimension
 % problem.func : problem pointer, e.g. [f,g,h]=problem.func(X)
@@ -7,12 +7,11 @@ function [population] = fNSDE_LSHADE44(problem)%
 % problem.lower_bound : lower_bound, dim is problem.dim
 % problem.upper_bound : upper_bound, dim is problem.dim
 % problem.radius : radius to judge convergence
-func=problem.func;
-Dim=problem.dim;
-Max_Gen=problem.max_fes;
-xmin=problem.lower_bound(1);
-xmax=problem.upper_bound(1);
-func_num=problem.func_num;
+func=CurrentSummary.ObjectiveFunctions{1, func_num};
+Dim=CurrentSummary.Dimensions(1, func_num);
+Max_Gen=CurrentSummary.MaxFitnessEvaluations(1, func_num);
+xmin=CurrentSummary.LowerBound{1, func_num}(1);
+xmax=CurrentSummary.UpperBound{1, func_num}(1);
 % Ninit for linearly population decreasing
 N_init=floor(60*sqrt(Dim));
 N_min = floor(N_init/2);
@@ -39,7 +38,7 @@ max_velikost_archivu=round(ps*2.6);
  P=zeros(ps,D+2);
  P(:,1:D)=pos;
  [P(:,D+1),gval,hval]=func(pos);
-P(:,D+2) = sum_vio(gval,hval,problem.epsim);
+P(:,D+2) = sum_vio(gval,hval,CurrentSummary.Epsim);
  
  MFpbin=.5*ones(1,H);
  MFpexp=.5*ones(1,H);
@@ -141,7 +140,7 @@ P(:,D+2) = sum_vio(gval,hval,problem.epsim);
                     % Q: result individual with fitness and violation
                     Q(i,1:D) = y;
                     [Q(i,D+1),gval,hval] = func(y);
-                    Q(i,D+2) = sum_vio(gval,hval,problem.epsim);
+                    Q(i,D+2) = sum_vio(gval,hval,CurrentSummary.Epsim);
 
                 case 2  %(CURRENTTORAND/EXP)
                     strategie(1,i)=2;
@@ -177,7 +176,7 @@ P(:,D+2) = sum_vio(gval,hval,problem.epsim);
                     %poskon(i,:)=y;
                     Q(i,1:D) = y;
                     [Q(i,D+1),gval,hval] = func(y);
-                    Q(i,D+2) = sum_vio(gval,hval,problem.epsim);
+                    Q(i,D+2) = sum_vio(gval,hval,CurrentSummary.Epsim);
 
                 case 3  %(RANDRL/BIN)
                     strategie(1,i)=3;
@@ -208,7 +207,7 @@ P(:,D+2) = sum_vio(gval,hval,problem.epsim);
                     %poskon(i,:)=zrcad(y,xmin,xmax);
                     Q(i,1:D) = y;
                     [Q(i,D+1),gval,hval] = func(y);
-                    Q(i,D+2) = sum_vio(gval,hval,problem.epsim);
+                    Q(i,D+2) = sum_vio(gval,hval,CurrentSummary.Epsim);
 
                 case 4  %(RANDRL/EXP)
                     strategie(1,i)=4;
@@ -237,7 +236,7 @@ P(:,D+2) = sum_vio(gval,hval,problem.epsim);
                     %poskon(i,:)=zrcad(y,xmin,xmax);
                     Q(i,1:D) = y;
                     [Q(i,D+1),gval,hval] = func(y);
-                    Q(i,D+2) = sum_vio(gval,hval,problem.epsim);
+                    Q(i,D+2) = sum_vio(gval,hval,CurrentSummary.Epsim);
 
             end
             % if result are the same, then increase strategy num by one
