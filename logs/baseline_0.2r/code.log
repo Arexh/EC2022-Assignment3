@@ -1,0 +1,13 @@
+% reverse
+if evals < maxiter * 0.4
+    ny = 2 * y - P(find(sameSpecies==i),1:D);
+    ny=keep_range(ny,P(find(sameSpecies==i),1:D),xmin,xmax);
+    [nfit, ngval, nhval] = func(ny);
+    nvio = sum_vio(ngval,nhval,CurrentSummary.Epsim);
+    if nfit < Q(i, D+1)
+        Q(i,1:D) = ny;
+        Q(i,D+1) = nfit;
+        Q(i,D+2) = nvio;
+    end
+    evals = evals + 1;
+end
