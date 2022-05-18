@@ -1,6 +1,6 @@
 function [FinalPopulation] = mPSO(CurrentSummary, ProblemNumber)
     %% Create mPSO Instance
-    mPSOInstance = mPSOAdaptive(CurrentSummary, ProblemNumber);
+    mPSOInstance = mPSOFeasible(CurrentSummary, ProblemNumber);
 
     %% Initialize Swarms (both search and adaptive)
     mPSOInstance.Initialization();
