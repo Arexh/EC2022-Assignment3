@@ -19,10 +19,12 @@ classdef mPSOModel < handle
         %% Constant Parameters
         X = 0.729843788;
         C1 = 2.05;
-        C2 = 2.05;
+        C2 = 2.6;
         SwarmNumber = 10;
-        PopulationSize = 5;
-        PenaltyFactor = 1000;
+        PopulationSize = 8;
+        PenaltyFactor = 10;
+        AdaptiveLowerBound = 0;
+        AdaptiveUpperBound = 1;
     end
 
     methods
@@ -54,12 +56,13 @@ classdef mPSOModel < handle
         end
 
         function InitializeAdaptiveSwarm(obj, AdaptiveSwarm)
-            obj.InitializeSwarm(AdaptiveSwarm, 0, 10);
+            obj.InitializeSwarm(AdaptiveSwarm, obj.AdaptiveLowerBound, obj.AdaptiveUpperBound);
+            obj.CheckRange(AdaptiveSwarm, obj.AdaptiveLowerBound, obj.AdaptiveUpperBound);
         end
 
         function InitializeSearchSwarm(obj, SearchSwarm)
             obj.InitializeSwarm(SearchSwarm, obj.LowerBound, obj.UpperBound);
-            obj.CheckRange(SearchSwarm);
+            obj.CheckRange(SearchSwarm, obj.LowerBound, obj.UpperBound);
             obj.EvaluateSearchSwarm(SearchSwarm);
             obj.UpdatePbest(SearchSwarm);
             obj.UpdateGbest(SearchSwarm);
@@ -76,28 +79,28 @@ classdef mPSOModel < handle
             %% Apply PSO to the Swarm
             % Calculate Velocity
             CurrentShape = size(SwarmModel.Velocities);
-            SwarmModel.Velocities(:, :) = obj.X * (SwarmModel.Velocities ...
+            CurrentX = 1.2 - 0.9 * (obj.EvaluationTime / obj.MaxEvaluationTime);
+            SwarmModel.Velocities(:, :) = obj.X * (CurrentX * SwarmModel.Velocities ...
             + (obj.C1 * rand(CurrentShape) .* (SwarmModel.PbestIndividuals - SwarmModel.Individuals) ...
-            +  obj.C2 * rand(CurrentShape) .* (reshape(repmat(SwarmModel.GbestIndividual, CurrentShape(1), 1), CurrentShape) -   SwarmModel.Individuals)));
+            +  obj.C2 * rand(CurrentShape) .* (reshape(repmat(SwarmModel.GbestIndividual, CurrentShape(1), 1), CurrentShape) -  SwarmModel.Individuals)));
             % Update Population
             SwarmModel.Individuals(:, :) = SwarmModel.Individuals + SwarmModel.Velocities;
         end
 
-        function CheckRange(obj, SwarmModel)
+        function CheckRange(obj, SwarmModel, LowerBound, UpperBound)
             %% Check Range for Individual and Velocity
             % Dimension that larger than upperbound
-            LargerIndex = SwarmModel.Individuals > obj.UpperBound;
-            SwarmModel.Individuals(LargerIndex) = obj.UpperBound;
+            LargerIndex = SwarmModel.Individuals > UpperBound;
+            SwarmModel.Individuals(LargerIndex) = UpperBound;
             SwarmModel.Velocities(LargerIndex) = 0;
             % Dimension that smaller than lowerbound
-            SmallerIndex = SwarmModel.Individuals < obj.LowerBound;
-            SwarmModel.Individuals(SmallerIndex) = obj.LowerBound;
+            SmallerIndex = SwarmModel.Individuals < LowerBound;
+            SwarmModel.Individuals(SmallerIndex) = LowerBound;
             SwarmModel.Velocities(SmallerIndex) = 0;
         end
 
         function EvaluateSearchSwarm(obj, SearchSwarm)
             % Evaluation Swarm for Fitness and Violation
-            Penalty = obj.PenaltyFactor;
             % if obj.EvaluationTime < obj.MaxEvaluationTime * 0.3
             %     Penalty = 10;
             % end
@@ -108,7 +111,7 @@ classdef mPSOModel < handle
             % end
             [SearchSwarm.Fitnesses(:, 1), G, H] = obj.ObjectiveFunction(SearchSwarm.Individuals);
             SearchSwarm.Violations(:, 1) = obj.ViolationFuncion(G, H, obj.Epsim);
-            SearchSwarm.Fitnesses(:, 1) = SearchSwarm.Fitnesses(:, 1) + Penalty * SearchSwarm.Violations(:, 1);
+            SearchSwarm.Fitnesses(:, 1) = SearchSwarm.Fitnesses(:, 1) + obj.PenaltyFactor * SearchSwarm.Violations(:, 1);
             % Increase Evalution Time
             obj.EvaluationTime = obj.EvaluationTime + obj.PopulationSize;
         end
@@ -133,7 +136,7 @@ classdef mPSOModel < handle
                     AdaptiveSwarm.Fitnesses(IndividualIndex, 1) = sum(CurrentSearchSwarm.Fitnesses(FeasibleSolutionIndex, 1)) / FeasibleNumber - FeasibleNumber;
                 else
                     % No feasible solution
-                    AdaptiveSwarm.Fitnesses(IndividualIndex, 1) = MaxValidFitness + sum(CurrentSearchSwarm.Violations) / obj.PopulationSize;
+                    AdaptiveSwarm.Fitnesses(IndividualIndex, 1) = MaxValidFitness + sum(CurrentSearchSwarm.Violations) / obj.PopulationSize - obj.PopulationSize;
                 end
             end
         end
