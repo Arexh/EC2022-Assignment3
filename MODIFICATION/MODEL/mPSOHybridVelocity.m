@@ -1,4 +1,4 @@
-classdef mPSOFeasible < handle
+classdef mPSOHybridVelocity < handle
 
     properties
         %% Define Varibles
@@ -11,7 +11,7 @@ classdef mPSOFeasible < handle
         MaxEvaluationTime; % Scalar
         ObjectiveFunction; % Function that given individuals, return fitness
         ViolationFuncion; % Function that given individuals, return sum of violation
-        SearchSwarms; % 1 x SwarmNumber SwarmModel (cell)
+        SearchSwarms; % 1 x SwarmNumber HybridSwarmModel (cell)
     end
 
     properties (Constant = true)
@@ -19,6 +19,8 @@ classdef mPSOFeasible < handle
         X = 0.729843788;
         C1 = 2.65;
         C2 = 2.05;
+        C3 = 0.25;
+        C4 = 0.25;
         SwarmNumber = 10;
         PopulationSize = 8;
         Inertia = 0.93;
@@ -26,7 +28,7 @@ classdef mPSOFeasible < handle
 
     methods
 
-        function obj = mPSOFeasible(CurrentSummary, ProblemNumber)
+        function obj = mPSOHybridVelocity(CurrentSummary, ProblemNumber)
             %% Initialization
             obj.Epsim = CurrentSummary.Epsim;
             obj.Dimension = CurrentSummary.Dimensions(1, ProblemNumber);
@@ -42,7 +44,7 @@ classdef mPSOFeasible < handle
 
         function Initialization(obj)
             for SwarmIndex = 1:obj.SwarmNumber
-                obj.SearchSwarms{1, SwarmIndex} = SwarmModel(obj.PopulationSize, obj.Dimension, SwarmIndex);
+                obj.SearchSwarms{1, SwarmIndex} = HybridSwarmModel(obj.PopulationSize, obj.Dimension, SwarmIndex);
                 obj.InitializeSearchSwarm(obj.SearchSwarms{1, SwarmIndex});
             end
         end
@@ -53,52 +55,59 @@ classdef mPSOFeasible < handle
             obj.UpdateGbest(SearchSwarm);
         end
 
-        function InitializeFeasibleSwarm(obj, SwarmModel, LowerBound, UpperBound)
+        function InitializeFeasibleSwarm(obj, HybridSwarmModel, LowerBound, UpperBound)
             %% Individual Initialization: Random Sampling, Until All Individuals are Feasible
-            SwarmModel.Violations = ones(size(SwarmModel.Violations));
+            HybridSwarmModel.Violations = ones(size(HybridSwarmModel.Violations));
 
             while true
                 % Find infeasible individuals
-                IndividualIndex = find(SwarmModel.Violations > 0);
+                IndividualIndex = find(HybridSwarmModel.Violations > 0);
                 % If no infeasible individuals, break loop
                 if isempty(IndividualIndex); break; end
                 % Random init infeasible individuals
-                SwarmModel.Individuals(IndividualIndex, :) = LowerBound + (UpperBound - LowerBound) .* rand(size(SwarmModel.Individuals(IndividualIndex, :)));
+                HybridSwarmModel.Individuals(IndividualIndex, :) = LowerBound + (UpperBound - LowerBound) .* rand(size(HybridSwarmModel.Individuals(IndividualIndex, :)));
                 % Evaluate infeasible individuals (updated)
-                [SwarmModel.Fitnesses(IndividualIndex, 1), G, H] = obj.ObjectiveFunction(SwarmModel.Individuals(IndividualIndex, :));
+                [HybridSwarmModel.Fitnesses(IndividualIndex, 1), G, H] = obj.ObjectiveFunction(HybridSwarmModel.Individuals(IndividualIndex, :));
                 % Update violations
-                SwarmModel.Violations(IndividualIndex, 1) = obj.ViolationFuncion(G, H, obj.Epsim);
+                HybridSwarmModel.Violations(IndividualIndex, 1) = obj.ViolationFuncion(G, H, obj.Epsim);
                 % Increase evalution time
                 obj.EvaluationTime = obj.EvaluationTime + length(IndividualIndex);
                 % If evalution time is run out, then terminate
                 if obj.IsTerminal(); break; end
             end
 
+            HybridSwarmModel.PbestFeasibleIndividuals(:, :) = HybridSwarmModel.Individuals(:, :);
+            HybridSwarmModel.PbestFeasibleFitnesses(:, :) = HybridSwarmModel.Fitnesses(:, :);
+            [HybridSwarmModel.GbestFeasibleFitness(1, 1), GbestIndex] = min(HybridSwarmModel.Fitnesses(:, 1));
+            HybridSwarmModel.GbestFeasibleIndividual(1, :) = HybridSwarmModel.Individuals(GbestIndex, :);
             % Velocity Initialization: Zero Init
-            SwarmModel.Velocities(:, :) = 0;
+            HybridSwarmModel.Velocities(:, :) = 0;
         end
 
-        function PSO(obj, SwarmModel)
+        function PSO(obj, HybridSwarmModel)
             %% Apply PSO to the Swarm
             % Calculate Velocity
-            CurrentShape = size(SwarmModel.Velocities);
-            SwarmModel.Velocities(:, :) = obj.X * (obj.Inertia * SwarmModel.Velocities ...
-            + (obj.C1 * rand(CurrentShape) .* (SwarmModel.PbestIndividuals - SwarmModel.Individuals) ...
-            +  obj.C2 * rand(CurrentShape) .* (reshape(repmat(SwarmModel.GbestIndividual, CurrentShape(1), 1), CurrentShape) -  SwarmModel.Individuals)));
+            EvalutionTimeRatio = 1.2 - obj.EvaluationTime / obj.MaxEvaluationTime;
+            CurrentShape = size(HybridSwarmModel.Velocities);
+            HybridSwarmModel.Velocities(:, :) = obj.X * (obj.Inertia * HybridSwarmModel.Velocities ...
+            + obj.C1 * rand(CurrentShape) .* (HybridSwarmModel.PbestFeasibleIndividuals - HybridSwarmModel.Individuals) ...
+            + obj.C2 * rand(CurrentShape) .* (reshape(repmat(HybridSwarmModel.GbestFeasibleIndividual, CurrentShape(1), 1), CurrentShape) -  HybridSwarmModel.Individuals) ...
+            + obj.C3 * EvalutionTimeRatio * rand(CurrentShape) .* (HybridSwarmModel.PbestIndividuals - HybridSwarmModel.Individuals) ...
+            + obj.C4 * EvalutionTimeRatio * rand(CurrentShape) .* (reshape(repmat(HybridSwarmModel.GbestIndividual, CurrentShape(1), 1), CurrentShape) -  HybridSwarmModel.Individuals));
             % Update Population
-            SwarmModel.Individuals(:, :) = SwarmModel.Individuals + SwarmModel.Velocities;
+            HybridSwarmModel.Individuals(:, :) = HybridSwarmModel.Individuals + HybridSwarmModel.Velocities;
         end
 
-        function CheckRange(~, SwarmModel, LowerBound, UpperBound)
+        function CheckRange(~, HybridSwarmModel, LowerBound, UpperBound)
             %% Check Range for Individual and Velocity
             % Dimension that larger than upperbound
-            LargerIndex = SwarmModel.Individuals > UpperBound;
-            SwarmModel.Individuals(LargerIndex) = UpperBound;
-            SwarmModel.Velocities(LargerIndex) = 0;
+            LargerIndex = HybridSwarmModel.Individuals > UpperBound;
+            HybridSwarmModel.Individuals(LargerIndex) = UpperBound;
+            HybridSwarmModel.Velocities(LargerIndex) = 0;
             % Dimension that smaller than lowerbound
-            SmallerIndex = SwarmModel.Individuals < LowerBound;
-            SwarmModel.Individuals(SmallerIndex) = LowerBound;
-            SwarmModel.Velocities(SmallerIndex) = 0;
+            SmallerIndex = HybridSwarmModel.Individuals < LowerBound;
+            HybridSwarmModel.Individuals(SmallerIndex) = LowerBound;
+            HybridSwarmModel.Velocities(SmallerIndex) = 0;
         end
 
         function EvaluateSearchSwarm(obj, SearchSwarm)
@@ -109,20 +118,27 @@ classdef mPSOFeasible < handle
             obj.EvaluationTime = obj.EvaluationTime + obj.PopulationSize;
         end
 
-        function UpdatePbest(~, SwarmModel)
+        function UpdatePbest(~, HybridSwarmModel)
             %% Intialize personal best: best individual of index-based specie
-            % Find feasible individuals
-            UpdateIndex = find((SwarmModel.Violations == 0) & (SwarmModel.Fitnesses < SwarmModel.PbestFitnesses));
-            SwarmModel.PbestIndividuals(UpdateIndex, :) = SwarmModel.Individuals(UpdateIndex, :);
-            SwarmModel.PbestFitnesses(UpdateIndex, 1) = SwarmModel.Fitnesses(UpdateIndex, 1);
-            SwarmModel.PbestViolations(UpdateIndex, 1) = SwarmModel.Violations(UpdateIndex, 1);
+            % Update feasible individuals
+            UpdateIndex = find((HybridSwarmModel.Violations == 0) & (HybridSwarmModel.Fitnesses < HybridSwarmModel.PbestFeasibleFitnesses));
+            HybridSwarmModel.PbestFeasibleIndividuals(UpdateIndex, :) = HybridSwarmModel.Individuals(UpdateIndex, :);
+            HybridSwarmModel.PbestFeasibleFitnesses(UpdateIndex, 1) = HybridSwarmModel.Fitnesses(UpdateIndex, 1);
+            % Update non-constrained individuals
+            UpdateIndex = find(HybridSwarmModel.Fitnesses < HybridSwarmModel.PbestFitnesses);
+            HybridSwarmModel.PbestIndividuals(UpdateIndex, :) = HybridSwarmModel.Individuals(UpdateIndex, :);
+            HybridSwarmModel.PbestFitnesses(UpdateIndex, 1) = HybridSwarmModel.Fitnesses(UpdateIndex, 1);
+            HybridSwarmModel.PbestViolations(UpdateIndex, 1) = HybridSwarmModel.Violations(UpdateIndex, 1);
         end
 
-        function UpdateGbest(~, SwarmModel)
-            % Initialize global best: best of all individuals (minimize fitness)
-            [SwarmModel.GbestFitness(1, 1), GbestIndex] = min(SwarmModel.PbestFitnesses(:, 1));
-            SwarmModel.GbestIndividual(1, :) = SwarmModel.PbestIndividuals(GbestIndex, :);
-            SwarmModel.GbestViolation(:, 1) = SwarmModel.PbestViolations(GbestIndex, 1);
+        function UpdateGbest(~, HybridSwarmModel)
+            % Update non-constrained Gbest
+            [HybridSwarmModel.GbestFitness(1, 1), GbestIndex] = min(HybridSwarmModel.PbestFitnesses(:, 1));
+            HybridSwarmModel.GbestIndividual(1, :) = HybridSwarmModel.PbestIndividuals(GbestIndex, :);
+            HybridSwarmModel.GbestViolation(:, 1) = HybridSwarmModel.PbestViolations(GbestIndex, 1);
+            % Update feasible Gbest
+            [HybridSwarmModel.GbestFeasibleFitness(1, 1), GbestIndex] = min(HybridSwarmModel.PbestFeasibleFitnesses(:, 1));
+            HybridSwarmModel.GbestFeasibleIndividual(1, :) = HybridSwarmModel.PbestFeasibleIndividuals(GbestIndex, :);
         end
 
         function Exclusion(obj)
@@ -157,7 +173,7 @@ classdef mPSOFeasible < handle
 
         function GenerationFinish(obj)
             %% Exclusion
-            obj.Exclusion();
+            % obj.Exclusion();
         end
 
         function [Flag] = IsTerminal(obj)
@@ -168,7 +184,7 @@ classdef mPSOFeasible < handle
             FinalPopulation = zeros(obj.SwarmNumber * obj.PopulationSize, obj.Dimension);
             for SwarmIndex = 1:obj.SwarmNumber
                 FinalPopulation(1 + (SwarmIndex - 1) * obj.PopulationSize:SwarmIndex * obj.PopulationSize, :) = ...
-                    obj.SearchSwarms{1, SwarmIndex}.PbestIndividuals;
+                    obj.SearchSwarms{1, SwarmIndex}.PbestFeasibleIndividuals;
             end
         end
 
