@@ -13,7 +13,7 @@ classdef Summary < handle
     properties (Constant = true)
         Dimensions = [1, 2, 2, 5, 5, 5, 10, 10, 10, 1, 2, 2, 1, 1, 2, 2, 3, 5];
         PeakNumbers = [2, 2, 4, 2, 8, 32, 2, 8, 32, 10, 4, 4, 2, 10, 8, 24, 16, 64];
-        Radius = [0.5*ones(1,9), 0.05*ones(1,9)];
+        Radius = [0.5 * ones(1, 9), 0.05 * ones(1, 9)];
         Accuracies = [0.1, 0.01, 0.001, 0.0001, 0.00001];
         MaxFitnessEvaluations = floor(2000 .* Summary.Dimensions .* sqrt(Summary.PeakNumbers));
         ProblemTotalNum = length(Summary.Dimensions);
@@ -79,6 +79,16 @@ classdef Summary < handle
                 RatioSum = RatioSum + CurrentMeanValue;
             end
             fprintf(f, 'Overall Average Peak Ratio: %f\n', RatioSum / obj.ProblemTotalNum);
+            MeanRatio = reshape(mean(obj.FoundedPeaks, 2), obj.ProblemTotalNum, length(obj.Accuracies));
+            MeanRatio = MeanRatio ./ repmat(obj.PeakNumbers', 1, length(obj.Accuracies));
+            MeanRatio = reshape(mean(MeanRatio, 1), 1, length(obj.Accuracies));
+            MeanSuccessRatio = mean(obj.FoundedPeaks == repmat(obj.PeakNumbers', [1, obj.RunNumber, length(obj.Accuracies)]), [1, 2]);
+            for index = 1:length(obj.Accuracies)
+                fprintf(f, 'Accuracy: %f, Average Peak Ratio: %f\n', obj.Accuracies(1, index), MeanRatio(1, index));
+            end
+            for index = 1:length(obj.Accuracies)
+                fprintf(f, 'Accuracy: %f, Average Success Ratio: %f\n', obj.Accuracies(1, index), MeanSuccessRatio(1, index));
+            end
             fprintf(f, '--------------------- Stats ---------------------\n');
             fclose(f);
         end
@@ -100,7 +110,7 @@ classdef Summary < handle
                 AccuraySummaryString = append(AccuraySummaryString, 'PR Median: %f\n');
                 AccuraySummaryString = append(AccuraySummaryString, 'PR Standard Deviation: %f\n');
                 AccuraySummaryString = append(AccuraySummaryString, 'SR: %f\n');
-                AccuraySummaryString = append(AccuraySummaryString, '---- Accuracy %f ----\n');
+                AccuraySummaryString = append(AccuraySummaryString, '---- Accuracy: %f ----\n');
                 AccuraySummaryString = sprintf(AccuraySummaryString, obj.Accuracies(index), ...
                                         max(PeakRatio), min(PeakRatio), ...
                                         mean(PeakRatio), median(PeakRatio), ...
