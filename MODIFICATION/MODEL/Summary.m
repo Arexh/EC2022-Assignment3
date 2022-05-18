@@ -43,8 +43,7 @@ classdef Summary < handle
 
         function InitLogFile(obj)
             diary off;
-            if ~exist(obj.LogPath, 'dir'); mkdir(obj.LogPath); end
-
+            Summary.MakeDirectory(obj.LogPath);
             Summary.MakeDirectory(fullfile(obj.LogPath, obj.FitnessPlotFolderName));
             Summary.MakeDirectory(fullfile(obj.LogPath, obj.PeakRatioFolderName));
 

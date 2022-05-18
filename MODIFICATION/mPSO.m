@@ -1,4 +1,5 @@
 function [FinalPopulation] = mPSO(CurrentSummary, ProblemNumber)
+    %% Create mPSO Instance
     mPSOInstance = mPSOPenalty(CurrentSummary, ProblemNumber);
 
     %% Initialize Swarms (both search and adaptive)
@@ -11,45 +12,15 @@ function [FinalPopulation] = mPSO(CurrentSummary, ProblemNumber)
         %% Algorithm Start
         for SwarmIndex = 1:mPSOInstance.SwarmNumber
             % Apply PSO to CurrentSwarm, then update CurrentSwarm
-            CurrentSwarm = mPSOInstance.SearchSwarms{1, SwarmIndex};
-            mPSOInstance.PSO(CurrentSwarm);
-            mPSOInstance.CheckRange(CurrentSwarm, mPSOInstance.LowerBound, mPSOInstance.UpperBound);
-            mPSOInstance.EvaluateSearchSwarm(CurrentSwarm);
-            mPSOInstance.UpdatePbest(CurrentSwarm);
-            mPSOInstance.UpdateGbest(CurrentSwarm);
+            mPSOInstance.UpdateSwarm(SwarmIndex);
             % Check if evaluation times exceed
             if mPSOInstance.IsTerminal()
                 break;
             end
         end
 
-        % if mPSOInstance.EvaluationTime < mPSOInstance.MaxEvaluationTime * 0.8
-        %     AdaptiveSwarm = mPSOInstance.AdaptiveSwarm;
-        %     mPSOInstance.PSO(AdaptiveSwarm);
-        %     mPSOInstance.EvaluateAdaptiveSwarm(AdaptiveSwarm);
-        %     mPSOInstance.UpdatePbest(AdaptiveSwarm);
-        %     mPSOInstance.UpdateGbest(AdaptiveSwarm);
-        % end
-        % disp(AdaptiveSwarm.Individuals);
-
-        % AdaptiveSwarm = mPSOInstance.AdaptiveSwarm;
-        % mPSOInstance.PSO(AdaptiveSwarm);
-        % mPSOInstance.EvaluateAdaptiveSwarm(AdaptiveSwarm);
-        % mPSOInstance.UpdatePbest(AdaptiveSwarm);
-        % mPSOInstance.UpdateGbest(AdaptiveSwarm);
-        % disp(AdaptiveSwarm.Individuals);
-
-        % if mod(GenerationCounter, 1) == 0
-        %     AdaptiveSwarm = mPSOInstance.AdaptiveSwarm;
-        %     mPSOInstance.PSO(AdaptiveSwarm);
-        %     mPSOInstance.EvaluateAdaptiveSwarm(AdaptiveSwarm);
-        %     mPSOInstance.CheckRange(AdaptiveSwarm, mPSOInstance.AdaptiveLowerBound, mPSOInstance.AdaptiveUpperBound);
-        %     mPSOInstance.UpdatePbest(AdaptiveSwarm);
-        %     mPSOInstance.UpdateGbest(AdaptiveSwarm);
-        % end
-
-        %% Exclusion
-        mPSOInstance.Exclusion();
+        %% Do Exclusion or Update Adaptive Swarm
+        mPSOInstance.GenerationFinish();
 
         % Check if evaluation times exceed
         if mPSOInstance.IsTerminal()

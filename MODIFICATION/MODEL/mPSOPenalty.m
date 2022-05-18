@@ -131,6 +131,20 @@ classdef mPSOPenalty < handle
             end
         end
 
+        function UpdateSwarm(obj, SwarmIndex)
+            CurrentSwarm = obj.SearchSwarms{1, SwarmIndex};
+            obj.PSO(CurrentSwarm);
+            obj.CheckRange(CurrentSwarm, obj.LowerBound, obj.UpperBound);
+            obj.EvaluateSearchSwarm(CurrentSwarm);
+            obj.UpdatePbest(CurrentSwarm);
+            obj.UpdateGbest(CurrentSwarm);
+        end
+
+        function GenerationFinish(obj)
+            %% Exclusion
+            obj.Exclusion();
+        end
+
         function [Flag] = IsTerminal(obj)
             Flag = obj.EvaluationTime >= obj.MaxEvaluationTime;
         end
