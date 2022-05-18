@@ -1,4 +1,4 @@
-classdef mPSOModel < handle
+classdef mPSOPenalty < handle
 
     properties
         %% Define Varibles
@@ -11,7 +11,6 @@ classdef mPSOModel < handle
         MaxEvaluationTime; % Scalar
         ObjectiveFunction; % Function that given individuals, return fitness
         ViolationFuncion; % Function that given individuals, return sum of violation
-        AdaptiveSwarm; % SwarmModel
         SearchSwarms; % 1 x SwarmNumber SwarmModel (cell)
     end
 
@@ -23,13 +22,11 @@ classdef mPSOModel < handle
         SwarmNumber = 10;
         PopulationSize = 8;
         PenaltyFactor = 10;
-        AdaptiveLowerBound = 0;
-        AdaptiveUpperBound = 1;
     end
 
     methods
 
-        function obj = mPSOModel(CurrentSummary, ProblemNumber)
+        function obj = mPSOPenalty(CurrentSummary, ProblemNumber)
             %% Initialization
             obj.Epsim = CurrentSummary.Epsim;
             obj.Dimension = CurrentSummary.Dimensions(1, ProblemNumber);
@@ -44,20 +41,10 @@ classdef mPSOModel < handle
         end
 
         function Initialization(obj)
-            obj.AdaptiveSwarm = SwarmModel(obj.SwarmNumber, 1, 1);
-            obj.InitializeAdaptiveSwarm(obj.AdaptiveSwarm);
             for SwarmIndex = 1:obj.SwarmNumber
                 obj.SearchSwarms{1, SwarmIndex} = SwarmModel(obj.PopulationSize, obj.Dimension, SwarmIndex);
                 obj.InitializeSearchSwarm(obj.SearchSwarms{1, SwarmIndex});
             end
-            obj.EvaluateAdaptiveSwarm(obj.AdaptiveSwarm);
-            obj.UpdatePbest(obj.AdaptiveSwarm);
-            obj.UpdateGbest(obj.AdaptiveSwarm);
-        end
-
-        function InitializeAdaptiveSwarm(obj, AdaptiveSwarm)
-            obj.InitializeSwarm(AdaptiveSwarm, obj.AdaptiveLowerBound, obj.AdaptiveUpperBound);
-            obj.CheckRange(AdaptiveSwarm, obj.AdaptiveLowerBound, obj.AdaptiveUpperBound);
         end
 
         function InitializeSearchSwarm(obj, SearchSwarm)
@@ -101,44 +88,11 @@ classdef mPSOModel < handle
 
         function EvaluateSearchSwarm(obj, SearchSwarm)
             % Evaluation Swarm for Fitness and Violation
-            % if obj.EvaluationTime < obj.MaxEvaluationTime * 0.3
-            %     Penalty = 10;
-            % end
-            % if obj.EvaluationTime < obj.MaxEvaluationTime * 0.8
-            %     Penalty = obj.AdaptiveSwarm.Individuals(SearchSwarm.Index, 1);
-            % else
-            %     Penalty = obj.AdaptiveSwarm.GbestIndividual;
-            % end
             [SearchSwarm.Fitnesses(:, 1), G, H] = obj.ObjectiveFunction(SearchSwarm.Individuals);
             SearchSwarm.Violations(:, 1) = obj.ViolationFuncion(G, H, obj.Epsim);
             SearchSwarm.Fitnesses(:, 1) = SearchSwarm.Fitnesses(:, 1) + obj.PenaltyFactor * SearchSwarm.Violations(:, 1);
             % Increase Evalution Time
             obj.EvaluationTime = obj.EvaluationTime + obj.PopulationSize;
-        end
-
-        function EvaluateAdaptiveSwarm(obj, AdaptiveSwarm)
-            MaxValidFitness = 0;
-            for SwarmIndex = 1:obj.SwarmNumber
-                CurrentSearchSwarm = obj.SearchSwarms{1, SwarmIndex};
-                ValidIndex = CurrentSearchSwarm.Violations == 0;
-                if sum(ValidIndex) == 0
-                    continue;
-                end
-                MaxValidFitness = max(MaxValidFitness, max(CurrentSearchSwarm.Fitnesses(ValidIndex, :)));
-            end
-
-            for IndividualIndex = 1:obj.SwarmNumber
-                CurrentSearchSwarm = obj.SearchSwarms{1, IndividualIndex};
-                FeasibleSolutionIndex = CurrentSearchSwarm.Violations == 0;
-                FeasibleNumber = sum(FeasibleSolutionIndex);
-                if FeasibleNumber > 0
-                    % At least one feasible solution
-                    AdaptiveSwarm.Fitnesses(IndividualIndex, 1) = sum(CurrentSearchSwarm.Fitnesses(FeasibleSolutionIndex, 1)) / FeasibleNumber - FeasibleNumber;
-                else
-                    % No feasible solution
-                    AdaptiveSwarm.Fitnesses(IndividualIndex, 1) = MaxValidFitness + sum(CurrentSearchSwarm.Violations) / obj.PopulationSize - obj.PopulationSize;
-                end
-            end
         end
 
         function UpdatePbest(~, SwarmModel)

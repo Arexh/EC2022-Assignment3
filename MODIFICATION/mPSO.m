@@ -1,5 +1,5 @@
 function [FinalPopulation] = mPSO(CurrentSummary, ProblemNumber)
-    mPSOInstance = mPSOModel(CurrentSummary, ProblemNumber);
+    mPSOInstance = mPSOPenalty(CurrentSummary, ProblemNumber);
 
     %% Initialize Swarms (both search and adaptive)
     mPSOInstance.Initialization();
@@ -39,14 +39,14 @@ function [FinalPopulation] = mPSO(CurrentSummary, ProblemNumber)
         % mPSOInstance.UpdateGbest(AdaptiveSwarm);
         % disp(AdaptiveSwarm.Individuals);
 
-        if mod(GenerationCounter, 1) == 0
-            AdaptiveSwarm = mPSOInstance.AdaptiveSwarm;
-            mPSOInstance.PSO(AdaptiveSwarm);
-            mPSOInstance.EvaluateAdaptiveSwarm(AdaptiveSwarm);
-            mPSOInstance.CheckRange(AdaptiveSwarm, mPSOInstance.AdaptiveLowerBound, mPSOInstance.AdaptiveUpperBound);
-            mPSOInstance.UpdatePbest(AdaptiveSwarm);
-            mPSOInstance.UpdateGbest(AdaptiveSwarm);
-        end
+        % if mod(GenerationCounter, 1) == 0
+        %     AdaptiveSwarm = mPSOInstance.AdaptiveSwarm;
+        %     mPSOInstance.PSO(AdaptiveSwarm);
+        %     mPSOInstance.EvaluateAdaptiveSwarm(AdaptiveSwarm);
+        %     mPSOInstance.CheckRange(AdaptiveSwarm, mPSOInstance.AdaptiveLowerBound, mPSOInstance.AdaptiveUpperBound);
+        %     mPSOInstance.UpdatePbest(AdaptiveSwarm);
+        %     mPSOInstance.UpdateGbest(AdaptiveSwarm);
+        % end
 
         %% Exclusion
         mPSOInstance.Exclusion();
