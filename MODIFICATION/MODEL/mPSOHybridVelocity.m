@@ -12,6 +12,7 @@ classdef mPSOHybridVelocity < handle
         ObjectiveFunction; % Function that given individuals, return fitness
         ViolationFuncion; % Function that given individuals, return sum of violation
         SearchSwarms; % 1 x SwarmNumber HybridSwarmModel (cell)
+        GbestShiftDistance; % Scalar
     end
 
     properties (Constant = true)
@@ -35,11 +36,12 @@ classdef mPSOHybridVelocity < handle
             obj.LowerBound = CurrentSummary.LowerBound{1, ProblemNumber}(1);
             obj.UpperBound = CurrentSummary.UpperBound{1, ProblemNumber}(1);
             obj.EvaluationTime = 0;
-            obj.ExclusionLimit = 1e-4 * ((obj.UpperBound - obj.LowerBound) / ((obj.SwarmNumber) ^ (1 / obj.Dimension)));
+            obj.ExclusionLimit = 1e-9 * ((obj.UpperBound - obj.LowerBound) / ((obj.SwarmNumber) ^ (1 / obj.Dimension)));
             obj.MaxEvaluationTime = CurrentSummary.MaxFitnessEvaluations(1, ProblemNumber);
             obj.ObjectiveFunction = CurrentSummary.ObjectiveFunctions{1, ProblemNumber};
             obj.ViolationFuncion = @sum_vio;
             obj.SearchSwarms = cell(1, obj.SwarmNumber);
+            obj.GbestShiftDistance = inf;
         end
 
         function Initialization(obj)
@@ -89,7 +91,12 @@ classdef mPSOHybridVelocity < handle
             % Calculate Velocity
             EvalutionTimeRatio = 1.2 - obj.EvaluationTime / obj.MaxEvaluationTime;
             CurrentShape = size(HybridSwarmModel.Velocities);
-            HybridSwarmModel.Velocities(:, :) = obj.X * (obj.Inertia * HybridSwarmModel.Velocities ...
+            CurrentInertia = obj.Inertia;
+            if obj.GbestShiftDistance < 1e-2
+                CurrentInertia = 0.2;
+                EvalutionTimeRatio = 0.4;
+            end
+            HybridSwarmModel.Velocities(:, :) = obj.X * (CurrentInertia * HybridSwarmModel.Velocities ...
             + obj.C1 * rand(CurrentShape) .* (HybridSwarmModel.PbestFeasibleIndividuals - HybridSwarmModel.Individuals) ...
             + obj.C2 * rand(CurrentShape) .* (reshape(repmat(HybridSwarmModel.GbestFeasibleIndividual, CurrentShape(1), 1), CurrentShape) -  HybridSwarmModel.Individuals) ...
             + obj.C3 * EvalutionTimeRatio * rand(CurrentShape) .* (HybridSwarmModel.PbestIndividuals - HybridSwarmModel.Individuals) ...
@@ -131,31 +138,36 @@ classdef mPSOHybridVelocity < handle
             HybridSwarmModel.PbestViolations(UpdateIndex, 1) = HybridSwarmModel.Violations(UpdateIndex, 1);
         end
 
-        function UpdateGbest(~, HybridSwarmModel)
+        function UpdateGbest(obj, HybridSwarmModel)
             % Update non-constrained Gbest
             [HybridSwarmModel.GbestFitness(1, 1), GbestIndex] = min(HybridSwarmModel.PbestFitnesses(:, 1));
             HybridSwarmModel.GbestIndividual(1, :) = HybridSwarmModel.PbestIndividuals(GbestIndex, :);
             HybridSwarmModel.GbestViolation(:, 1) = HybridSwarmModel.PbestViolations(GbestIndex, 1);
             % Update feasible Gbest
             [HybridSwarmModel.GbestFeasibleFitness(1, 1), GbestIndex] = min(HybridSwarmModel.PbestFeasibleFitnesses(:, 1));
+            ShiftDistance = pdist2(HybridSwarmModel.GbestFeasibleIndividual(1, :), HybridSwarmModel.PbestFeasibleIndividuals(GbestIndex, :));
+            if ~ShiftDistance == 0
+                obj.GbestShiftDistance = ShiftDistance;
+            end
             HybridSwarmModel.GbestFeasibleIndividual(1, :) = HybridSwarmModel.PbestFeasibleIndividuals(GbestIndex, :);
         end
 
         function Exclusion(obj)
             GbestIndividuals = zeros(obj.SwarmNumber, obj.Dimension);
             for SwarmIndex = 1:obj.SwarmNumber
-                GbestIndividuals(SwarmIndex, :) = obj.SearchSwarms{1, SwarmIndex}.GbestIndividual;
+                GbestIndividuals(SwarmIndex, :) = obj.SearchSwarms{1, SwarmIndex}.GbestFeasibleIndividual;
             end
             IndexToExclusion = pdist(GbestIndividuals) < obj.ExclusionLimit;
             Count = 1;
             for i = 1:obj.SwarmNumber-1
                 for j = i+1:obj.SwarmNumber
                     if IndexToExclusion(Count) == 1
-                        if obj.SearchSwarms{1, i}.GbestFitness < obj.SearchSwarms{1, j}.GbestFitness
+                        if obj.SearchSwarms{1, i}.GbestFeasibleFitness < obj.SearchSwarms{1, j}.GbestFeasibleFitness
                             obj.InitializeSearchSwarm(obj.SearchSwarms{1, j});
                         else
                             obj.InitializeSearchSwarm(obj.SearchSwarms{1, i});
                         end
+                        break;
                     end
                     Count = Count + 1;
                 end
@@ -171,9 +183,8 @@ classdef mPSOHybridVelocity < handle
             obj.UpdateGbest(CurrentSwarm);
         end
 
-        function GenerationFinish(obj)
-            %% Exclusion
-            % obj.Exclusion();
+        function GenerationFinish(~)
+            %% Do Nothing
         end
 
         function [Flag] = IsTerminal(obj)
