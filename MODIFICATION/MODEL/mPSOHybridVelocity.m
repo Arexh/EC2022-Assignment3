@@ -21,7 +21,7 @@ classdef mPSOHybridVelocity < handle
         C2 = 2.05;
         C3 = 0.25;
         C4 = 0.25;
-        SwarmNumber = 10;
+        SwarmNumber = 15;
         PopulationSize = 8;
         Inertia = 0.93;
     end
