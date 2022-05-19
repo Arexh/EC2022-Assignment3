@@ -7,8 +7,8 @@ classdef mPSOHybridVelocity < mPSOFeasible
 
     properties (Constant = true)
         %% Constant Parameters
-        C3 = 0.25;
-        C4 = 0.25;
+        C3 = 0.20;
+        C4 = 0.20;
         Alpha = 0.4;
         ConvergeLimit = 1e-2;
     end
@@ -39,7 +39,7 @@ classdef mPSOHybridVelocity < mPSOFeasible
         function PSO(obj, HybridSwarmModel)
             %% Apply PSO to the Swarm
             % Calculate Velocity
-            EvalutionTimeRatio = 1.2 - obj.EvaluationTime / obj.MaxEvaluationTime;
+            EvalutionTimeRatio = 1 - obj.EvaluationTime / obj.MaxEvaluationTime;
             CurrentShape = size(HybridSwarmModel.Velocities);
             CurrentInertia = obj.Inertia;
             if obj.GbestShiftDistance < obj.ConvergeLimit
