@@ -5,16 +5,16 @@
 % *      email: mge_(AT)_cs_(DOT)_stir_(DOT)_ac_(DOT)_uk 
 % *           : xiaodong_(DOT)_li_(AT)_rmit_(DOT)_edu_(DOT)_au 
 % * ****************************************************************************
-function [count, finalseeds] = count_goptima(pop, CurrentSummary, func_num, accuracy)
+function [count, finalseeds] = count_goptima(pop, problem, accuracy)
 % pop: NP, D
 peakNum = [2,2,4,2,8,32,2,8,32,10,4,4,2,10,8,24,16,64];
 
-no_goptima = peakNum(func_num);
+no_goptima = peakNum(problem.func_num);
 [NP, ~] = size(pop);
 % evaluate pop
 %[fpop, Vio] = func(pop, func_num);
-[fpop, g,h] = CurrentSummary.ObjectiveFunctions{1, func_num}(pop);
-Vio = sum_vio(g,h,CurrentSummary.Epsim);
+[fpop, g,h] = problem.func(pop);
+Vio = sum_vio(g,h,problem.epsim);
 % descent sorting
 fitness = [fpop, Vio, [1:NP]'];
 fitness = sortrows(fitness, 1);
@@ -36,7 +36,7 @@ for i=1:NP
 		% Calculate distance from seeds
 		dist = sqrt( sum( (seeds(j,:)-cpop(i,:)).^2,2) );
 		% If the Euclidean distance is less than the radius
-		if (dist < CurrentSummary.Radius-1e-10)
+		if (dist < problem.radius-1e-10)
 			found = 1;
 			break;
 		end
@@ -52,7 +52,7 @@ end
 count = 0; finalseeds = [];
 seedsfit = cpopfits(seedsidx);
 seedsVio = cpopVio(seedsidx);
-[ idx ] = find(seedsfit - get_fgoptima(func_num)<=accuracy & seedsVio == 0);
+[ idx ] = find(seedsfit - get_fgoptima(problem.func_num)<=accuracy & seedsVio == 0);
 if (length(idx) > no_goptima )
 	idx = idx(1:no_goptima);
 end
