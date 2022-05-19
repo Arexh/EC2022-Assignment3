@@ -8,6 +8,8 @@ classdef Summary < handle
         ObjectiveFunctions;
         UpperBound;
         LowerBound;
+        problem;
+        ProblemNumber;
     end
 
     properties (Constant = true)

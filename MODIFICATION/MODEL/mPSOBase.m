@@ -13,6 +13,10 @@ classdef mPSOBase < handle
         ViolationFuncion; % Function that given individuals, return sum of violation
         SearchSwarms; % 1 x SwarmNumber SwarmModel (cell)
         Generation; % Scalar
+        HistoryFitnesses; % 1 x MaxEvaluationTime matrix
+        HistoryViolations; % 1 x MaxEvaluationTime matrix
+        HistoryPeakRatio;
+        CurrentSummary;
     end
 
     properties (Constant = true)
@@ -40,6 +44,10 @@ classdef mPSOBase < handle
             obj.ViolationFuncion = @sum_vio;
             obj.SearchSwarms = cell(1, obj.SwarmNumber);
             obj.Generation = 1;
+            obj.HistoryFitnesses = inf(1, obj.MaxEvaluationTime);
+            obj.HistoryViolations = inf(1, obj.MaxEvaluationTime);
+            obj.HistoryPeakRatio = inf(5, floor(obj.MaxEvaluationTime / (obj.PopulationSize * obj.SwarmNumber)));
+            obj.CurrentSummary = CurrentSummary;
         end
 
         function InitializeSwarm(~, SwarmModel, LowerBound, UpperBound)
@@ -85,6 +93,8 @@ classdef mPSOBase < handle
             [SearchSwarm.Fitnesses(:, 1), G, H] = obj.ObjectiveFunction(SearchSwarm.Individuals);
             SearchSwarm.Violations(:, 1) = obj.ViolationFuncion(G, H, obj.Epsim);
             SearchSwarm.Fitnesses(:, 1) = SearchSwarm.Fitnesses(:, 1);
+            obj.HistoryFitnesses(1, obj.EvaluationTime+1:obj.EvaluationTime+obj.PopulationSize) = SearchSwarm.Fitnesses(:, 1)';
+            obj.HistoryViolations(1, obj.EvaluationTime+1:obj.EvaluationTime+obj.PopulationSize) = SearchSwarm.Violations(:, 1)';
             % Increase Evalution Time
             obj.EvaluationTime = obj.EvaluationTime + obj.PopulationSize;
         end
@@ -146,6 +156,8 @@ classdef mPSOBase < handle
         function GenerationFinish(obj)
             %% Exclusion
             obj.Exclusion();
+            %% Record Current Peak Ratio
+            obj.RecordPeakRatio();
             %% Increase Generation Counter
             obj.Generation = obj.Generation + 1;
         end
@@ -159,6 +171,15 @@ classdef mPSOBase < handle
             for SwarmIndex = 1:obj.SwarmNumber
                 FinalPopulation(1 + (SwarmIndex - 1) * obj.PopulationSize:SwarmIndex * obj.PopulationSize, :) = ...
                     obj.SearchSwarms{1, SwarmIndex}.PbestIndividuals;
+            end
+        end
+
+        function RecordPeakRatio(obj)
+            CurrentPopulation = obj.Output();
+            PeakNumber = obj.CurrentSummary.PeakNumbers(1, obj.CurrentSummary.ProblemNumber);
+            for AccuricyIndex = 1:length(obj.CurrentSummary.Accuracies)
+                [Count, ~] = count_goptima(CurrentPopulation, obj.CurrentSummary.problem, obj.CurrentSummary.Accuracies(1, AccuricyIndex));
+                obj.HistoryPeakRatio(AccuricyIndex, obj.Generation) = Count / PeakNumber;
             end
         end
 

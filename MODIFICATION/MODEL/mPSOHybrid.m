@@ -1,4 +1,4 @@
-classdef mPSOHybridVelocity < mPSOFeasible
+classdef mPSOHybrid < mPSOFeasible
 
     properties
         %% Define Varibles
@@ -15,7 +15,7 @@ classdef mPSOHybridVelocity < mPSOFeasible
 
     methods
 
-        function obj = mPSOHybridVelocity(CurrentSummary, ProblemNumber)
+        function obj = mPSOHybrid(CurrentSummary, ProblemNumber)
             %% Initialization
             obj = obj@mPSOFeasible(CurrentSummary, ProblemNumber);
             obj.GbestShiftDistance = inf;
@@ -85,8 +85,11 @@ classdef mPSOHybridVelocity < mPSOFeasible
             HybridSwarmModel.GbestFeasibleIndividual(1, :) = HybridSwarmModel.PbestFeasibleIndividuals(GbestIndex, :);
         end
 
-        function GenerationFinish(~)
-            %% Do Nothing
+        function GenerationFinish(obj)
+            %% Record Current Peak Ratio
+            obj.RecordPeakRatio();
+            %% Increase Generation Counter
+            obj.Generation = obj.Generation + 1;
         end
 
         function [FinalPopulation] = Output(obj)
