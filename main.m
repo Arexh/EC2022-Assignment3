@@ -7,7 +7,7 @@ TStart = tic;
 IfParallel = true;
 addpath(genpath('modification'));
 %% Create Summary object to record
-CurrentSummary = Summary('baseline', RunNumber);
+CurrentSummary = Summary('mPSO_hybrid', RunNumber);
 
 %% Main Function
 for ProblemIndex = 1:18
@@ -24,7 +24,6 @@ function ProblemRun(ProblemNumber, CurrentSummary, IfParallel)
         RunCounter = x{2};
         PeakNumber = x{3};
         CurrentSummary.FoundedPeaks(ProblemNum, RunCounter, :) = PeakNumber;
-        disp(['Offline Error Updated (Run: ', num2str(RunCounter), ').']);
         CurrentSummary.WriteAllSummary();
     end
 
@@ -48,7 +47,7 @@ function ProblemRun(ProblemNumber, CurrentSummary, IfParallel)
             [problem.lower_bound, problem.upper_bound] = niching_func_bound_cons(ProblemNumber, problem.dim );
             problem.radius = radius(ProblemNumber);
             rng('shuffle');
-            [population] = fNSDE_LSHADE44(CurrentSummary, ProblemNumber);
+            [population] = mPSO(CurrentSummary, ProblemNumber);
             Results = NaN(1, 5);
             for AccuricyIndex = 1:length(CurrentSummary.Accuracies)
                 [count, ~] = count_goptima(population, problem, accuracy(AccuricyIndex));
@@ -72,7 +71,7 @@ function ProblemRun(ProblemNumber, CurrentSummary, IfParallel)
         [problem.lower_bound, problem.upper_bound] = niching_func_bound_cons(ProblemNumber, problem.dim );
         problem.radius = radius(ProblemNumber);
         for RunNumber = 1:CurrentSummary.RunNumber
-            [population] = fNSDE_LSHADE44(CurrentSummary, ProblemNumber);
+            [population] = mPSO(CurrentSummary, ProblemNumber);
             for AccuricyIndex = 1:length(CurrentSummary.Accuracies)
                 [count, ~] = count_goptima(population, problem, accuracy(AccuricyIndex));
                 peak_num = CurrentSummary.PeakNumbers(1, ProblemNumber);

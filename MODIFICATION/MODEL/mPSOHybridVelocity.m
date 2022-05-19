@@ -9,7 +9,7 @@ classdef mPSOHybridVelocity < mPSOFeasible
         %% Constant Parameters
         C3 = 0.25;
         C4 = 0.25;
-        Alpha = 0.5;
+        Alpha = 0.4;
         ConvergeLimit = 1e-2;
     end
 
