@@ -42,16 +42,16 @@ classdef mPSOHybrid < mPSOFeasible
             EvalutionTimeRatio = 1 - obj.EvaluationTime / obj.MaxEvaluationTime;
             CurrentShape = size(HybridSwarmModel.Velocities);
             CurrentInertia = obj.Inertia;
-            if obj.GbestShiftDistance < obj.ConvergeLimit
-                CurrentInertia = 0.2;
-                EvalutionTimeRatio = 0.2;
-            end
+            % if obj.GbestShiftDistance < obj.ConvergeLimit
+            %     CurrentInertia = 0.2;
+            %     EvalutionTimeRatio = 0.2;
+            % end
             FeasibleVector = obj.C1 * rand(CurrentShape) .* (HybridSwarmModel.PbestFeasibleIndividuals - HybridSwarmModel.Individuals) ...
             + obj.C2 * rand(CurrentShape) .* (reshape(repmat(HybridSwarmModel.GbestFeasibleIndividual, CurrentShape(1), 1), CurrentShape) -  HybridSwarmModel.Individuals);
             NonConstrainedVector = obj.C3 * EvalutionTimeRatio * rand(CurrentShape) .* (HybridSwarmModel.PbestIndividuals - HybridSwarmModel.Individuals) ...
             + obj.C4 * EvalutionTimeRatio * rand(CurrentShape) .* (reshape(repmat(HybridSwarmModel.GbestIndividual, CurrentShape(1), 1), CurrentShape) -  HybridSwarmModel.Individuals);
             CombinedVector = FeasibleVector;
-            RandomSelect = rand(size(NonConstrainedVector)) < obj.Alpha;
+            RandomSelect = rand(size(NonConstrainedVector)) < obj.Alpha * EvalutionTimeRatio;
             CombinedVector(RandomSelect) = CombinedVector(RandomSelect) + NonConstrainedVector(RandomSelect);
             HybridSwarmModel.Velocities(:, :) = obj.X * (CurrentInertia * HybridSwarmModel.Velocities + CombinedVector);
             % Update Population
@@ -86,6 +86,8 @@ classdef mPSOHybrid < mPSOFeasible
         end
 
         function GenerationFinish(obj)
+            %% Exclusion
+            obj.Exclusion();
             %% Record Current Peak Ratio
             obj.RecordPeakRatio();
             %% Increase Generation Counter
