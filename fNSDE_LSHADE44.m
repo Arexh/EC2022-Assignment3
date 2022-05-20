@@ -20,7 +20,7 @@ p=0.11;
 max_velikost_archivu=round(ps*2.6);
 
  maxiter=Max_Gen;
- evals=ps;
+ evals=ps+CurrentSummary.CurrentEvalutionTime;
  D=Dim;
  H=6; % historical circle memories
 
@@ -34,7 +34,11 @@ max_velikost_archivu=round(ps*2.6);
  Xmin=repmat(Xmin,ps,1);
  Xmax=repmat(Xmax,ps,1);
  % init population
- pos=Xmin+(Xmax-Xmin).*rand(ps,D);
+ if isnan(CurrentSummary.PopulationForLSHADE)
+    pos=Xmin+(Xmax-Xmin).*rand(ps,D);
+ else
+    pos=CurrentSummary.PopulationForLSHADE;
+ end
  P=zeros(ps,D+2);
  P(:,1:D)=pos;
  [P(:,D+1),gval,hval]=func(pos);

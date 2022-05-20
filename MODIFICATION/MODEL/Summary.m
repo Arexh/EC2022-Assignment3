@@ -10,6 +10,8 @@ classdef Summary < handle
         LowerBound;
         problem;
         ProblemNumber;
+        PopulationForLSHADE;
+        CurrentEvalutionTime;
     end
 
     properties (Constant = true)
@@ -17,7 +19,7 @@ classdef Summary < handle
         PeakNumbers = [2, 2, 4, 2, 8, 32, 2, 8, 32, 10, 4, 4, 2, 10, 8, 24, 16, 64];
         Radius = [0.5 * ones(1, 9), 0.05 * ones(1, 9)];
         Accuracies = [0.1, 0.01, 0.001, 0.0001, 0.00001];
-        MaxFitnessEvaluations = floor(2000 .* Summary.Dimensions .* sqrt(Summary.PeakNumbers));
+        MaxFitnessEvaluations = floor(400000 .* Summary.Dimensions);
         ProblemTotalNum = length(Summary.Dimensions);
         Epsim = 1e-4;
         SummaryFileName = 'summary.log';
@@ -40,7 +42,8 @@ classdef Summary < handle
                 obj.ObjectiveFunctions{1, index} = @(x) niching_func_cons(x, index);
                 [obj.LowerBound{1, index}, obj.UpperBound{1, index}] = niching_func_bound_cons(index, obj.Dimensions(index));
             end
-            obj.InitLogFile();
+            obj.PopulationForLSHADE = NaN;
+            obj.CurrentEvalutionTime = 0;
         end
 
         function InitLogFile(obj)
@@ -121,6 +124,14 @@ classdef Summary < handle
             end
             FormatString = append(FormatString, '--------------------- Problem %d ---------------------\n');
             SummaryString = sprintf(FormatString, ProblemNum, ProblemNum);
+        end
+
+        function ReadDataFromFiles(obj)
+            PeakRatioFolderPath = fullfile(obj.LogPath, obj.PeakRatioFolderName);
+            for ProblemIndex = 1:obj.ProblemTotalNum
+                DataPath = fullfile(PeakRatioFolderPath, [int2str(ProblemIndex), '.dat']);
+                obj.FoundedPeaks(ProblemIndex, :, :) = readmatrix(DataPath);
+            end
         end
 
     end

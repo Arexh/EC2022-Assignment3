@@ -7,7 +7,8 @@ TStart = tic;
 IfParallel = true;
 addpath(genpath('modification'));
 %% Create Summary object to record
-CurrentSummary = Summary('test', RunNumber);
+CurrentSummary = Summary('mPSO_hybrid_400000', RunNumber);
+CurrentSummary.InitLogFile();
 
 %% Main Function
 for ProblemIndex = 1:18
