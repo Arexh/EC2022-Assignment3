@@ -1,4 +1,4 @@
 import matlab.engine
 
 engine = matlab.engine.start_matlab()
-engine.CompleteTable(nargout=0)
+engine.CompareTable(nargout=0)
