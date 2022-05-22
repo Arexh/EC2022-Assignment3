@@ -36,6 +36,7 @@ function ProblemRun(ProblemNumber, CurrentSummary, IfParallel, EvaluationTimes)
     radius = [0.5*ones(1,9), 0.05*ones(1,9)];
     accuracy = [0.1; 0.01; 0.001; 0.0001; 0.00001];
 
+    %% Prepare Parameters
     CurrentSummary.problem = [];
     CurrentSummary.problem.epsim = 1e-4;
     CurrentSummary.problem.func_num=ProblemNumber;
@@ -56,6 +57,7 @@ function ProblemRun(ProblemNumber, CurrentSummary, IfParallel, EvaluationTimes)
     CurrentSummary.ProblemNumber = ProblemNumber;
 
     if IfParallel
+        %% Parallel Evaluate
         D = parallel.pool.DataQueue;
         afterEach(D, @(x) UpdateExperimentalResult(CurrentSummary, x));
         parfor RunNumber = 1:CurrentSummary.RunNumber
@@ -75,6 +77,7 @@ function ProblemRun(ProblemNumber, CurrentSummary, IfParallel, EvaluationTimes)
             send(D, MessagePackage);
         end
     else
+        %% Non-Parallel Evaluate
         for RunNumber = 1:CurrentSummary.RunNumber
             [population] = mPSO(CurrentSummary, ProblemNumber);
             for AccuricyIndex = 1:length(CurrentSummary.Accuracies)

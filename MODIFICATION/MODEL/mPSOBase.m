@@ -115,6 +115,7 @@ classdef mPSOBase < handle
         end
 
         function Exclusion(obj)
+            %% If Two Gbest is Too Close, Reinitialize the One with Inferior Fitness
             GbestIndividuals = zeros(obj.SwarmNumber, obj.Dimension);
             for SwarmIndex = 1:obj.SwarmNumber
                 GbestIndividuals(SwarmIndex, :) = obj.SearchSwarms{1, SwarmIndex}.GbestIndividual;

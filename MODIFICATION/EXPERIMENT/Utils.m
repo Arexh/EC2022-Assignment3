@@ -324,6 +324,122 @@ classdef Utils
             LatexTable = LatexTable + sprintf('  \\end{tabular}\n');
             LatexTable = LatexTable + sprintf('\\end{table*}');
         end
+        
+        function LatexTable = CompareUnconstrained(Caption, LogNames, TitleNames)
+            ProblemNumber = 18;
+            PeakRatioIndex = 5;
+            PeakRatios = NaN(2, ProblemNumber);
+            SuccessRatios = NaN(2, ProblemNumber);
+            for LogIndex = 1:length(LogNames)
+                CurrentSummary = Utils.GetSummary(LogNames{LogIndex});
+                CurrentSummary.ReadDataFromFiles();
+                for ProblemNumberIndex = 1:ProblemNumber
+                    PeakRatios(LogIndex, ProblemNumberIndex) = mean(CurrentSummary.FoundedPeaks(ProblemNumberIndex, :, PeakRatioIndex));
+                    SuccessRatios(LogIndex, ProblemNumberIndex) = mean(CurrentSummary.FoundedPeaks(ProblemNumberIndex, :, PeakRatioIndex) == 1);
+                end
+            end
+
+            %% Print Latex Table
+            LatexTable = "";
+            LatexTable = LatexTable + sprintf('\\begin{table}[h]\n');
+            LatexTable = LatexTable + sprintf('  \\centering\n');
+            LatexTable = LatexTable + sprintf('  \\caption{%s}\n', Caption);
+            LatexTable = LatexTable + sprintf('  \\begin{tabular}{|c|c|c|c|c|}\n');
+            LatexTable = LatexTable + sprintf('    \\hline\n');
+            LatexTable = LatexTable + sprintf('    Metric & \\multicolumn{2}{c|}{PR} & \\multicolumn{2}{c|}{SR} \\\\\n');
+            LatexTable = LatexTable + sprintf('    \\hline\n');
+            LatexTable = LatexTable + sprintf('    Algorithm & %s & %s & %s & %s \\\\\n', TitleNames{1}, TitleNames{2}, TitleNames{1}, TitleNames{2});
+            LatexTable = LatexTable + sprintf('    \\hline\n');
+            for i = 1:18
+                LatexTable = LatexTable + sprintf('    $F_{%d}$', i);
+                if PeakRatios(1, i) > PeakRatios(2, i)
+                    LatexTable = LatexTable + sprintf(' & \\textbf{%.2f}', PeakRatios(1, i));
+                else
+                    LatexTable = LatexTable + sprintf(' & %.2f', PeakRatios(1, i));
+                end
+                if PeakRatios(2, i) > PeakRatios(1, i)
+                    LatexTable = LatexTable + sprintf(' & \\textbf{%.2f}', PeakRatios(2, i));
+                else
+                    LatexTable = LatexTable + sprintf(' & %.2f', PeakRatios(2, i));
+                end
+                if SuccessRatios(1, i) > SuccessRatios(2, i)
+                    LatexTable = LatexTable + sprintf(' & \\textbf{%.2f}', SuccessRatios(1, i));
+                else
+                    LatexTable = LatexTable + sprintf(' & %.2f', SuccessRatios(1, i));
+                end
+                if SuccessRatios(2, i) > SuccessRatios(1, i)
+                    LatexTable = LatexTable + sprintf(' & \\textbf{%.2f}', SuccessRatios(2, i));
+                else
+                    LatexTable = LatexTable + sprintf(' & %.2f', SuccessRatios(2, i));
+                end
+                LatexTable = LatexTable + sprintf('\\\\\n');
+                LatexTable = LatexTable + sprintf('    \\hline\n');
+            end
+            LatexTable = LatexTable + sprintf('  \\end{tabular}\n');
+            LatexTable = LatexTable + sprintf('\\end{table}');
+        end
+
+        function LatexTable = CompareLowEvaluations(Caption, LogNames, TitleNames)
+            ProblemNumber = 18;
+            AccuracyNumber = 5;
+            AveragePeakRatios = NaN(5, 5);
+            AverageSuccessRatios = NaN(5, 5);
+            for LogIndex = 1:length(LogNames)
+                CurrentSummary = Utils.GetSummary(LogNames{LogIndex});
+                CurrentSummary.ReadDataFromFiles();
+                for AccuracyIndex = 1:AccuracyNumber
+                    AveragePeakRatios(LogIndex, AccuracyIndex) = mean(CurrentSummary.FoundedPeaks(:, :, AccuracyIndex), 'all');
+                    AverageSuccessRatios(LogIndex, AccuracyIndex) = mean(CurrentSummary.FoundedPeaks(:, :, AccuracyIndex) == 1, 'all');
+                end
+            end
+
+            %% Print Latex Table
+            LatexTable = "";
+            LatexTable = LatexTable + sprintf('\\begin{table}[h]\n');
+            LatexTable = LatexTable + sprintf('  \\centering\n');
+            LatexTable = LatexTable + sprintf('  \\caption{%s}\n', Caption);
+            LatexTable = LatexTable + sprintf('  \\begin{tabular}{c|c|c|c|c|c|c}\n');
+            LatexTable = LatexTable + sprintf('    \\specialrule{.1em}{.05em}{.05em}\n');
+            LatexTable = LatexTable + sprintf('    & $\\epsilon$ & %s & %s & %s & %s & %s \\\\\n', ...
+                TitleNames{1}, TitleNames{2}, TitleNames{3}, TitleNames{4}, TitleNames{5});
+            LatexTable = LatexTable + sprintf('    \\hline\n');
+            for i = 1:5
+                LatexTable = LatexTable + sprintf('    ');
+                if i == 1
+                    LatexTable = LatexTable + sprintf('\\multirow{5}{*}{PR}');
+                end
+                LatexTable = LatexTable + sprintf('& 1E-%d', i);
+                MaxPeakRatio = max(AveragePeakRatios(:, i));
+                for j = 1:5
+                    if MaxPeakRatio == AveragePeakRatios(j, i)
+                        LatexTable = LatexTable + sprintf(' & \\textbf{%.2f}', AveragePeakRatios(j, i));
+                    else
+                        LatexTable = LatexTable + sprintf(' & %.2f', AveragePeakRatios(j, i));
+                    end
+                end
+                LatexTable = LatexTable + sprintf('\\\\\n');
+            end
+            LatexTable = LatexTable + sprintf('    \\specialrule{.1em}{.05em}{.05em}\n');
+            for i = 1:5
+                LatexTable = LatexTable + sprintf('    ');
+                if i == 1
+                    LatexTable = LatexTable + sprintf('\\multirow{5}{*}{SR}');
+                end
+                LatexTable = LatexTable + sprintf(' & 1E-%d', i);
+                MaxSuccessRatio = max(AverageSuccessRatios(:, i));
+                for j = 1:5
+                    if MaxSuccessRatio == AverageSuccessRatios(j, i)
+                        LatexTable = LatexTable + sprintf(' & \\textbf{%.2f}', AverageSuccessRatios(j, i));
+                    else
+                        LatexTable = LatexTable + sprintf(' & %.2f', AverageSuccessRatios(j, i));
+                    end
+                end
+                LatexTable = LatexTable + sprintf('\\\\\n');
+            end
+            LatexTable = LatexTable + sprintf('    \\specialrule{.1em}{.05em}{.05em}\n');
+            LatexTable = LatexTable + sprintf('  \\end{tabular}\n');
+            LatexTable = LatexTable + sprintf('\\end{table}');
+        end
 
         function WriteFile(OuputFile, Content)
             f = fopen(OuputFile, 'w');

@@ -36,15 +36,16 @@ classdef mPSOAdaptive < mPSOBase
         end
 
         function EvaluateSearchSwarm(obj, SearchSwarm)
-            % Evaluation Swarm for Fitness and Violation
+            %% Evaluation Swarm for Fitness and Violation
             [SearchSwarm.Fitnesses(:, 1), G, H] = obj.ObjectiveFunction(SearchSwarm.Individuals);
             SearchSwarm.Violations(:, 1) = obj.ViolationFuncion(G, H, obj.Epsim);
             SearchSwarm.Fitnesses(:, 1) = SearchSwarm.Fitnesses(:, 1) + obj.AdaptiveSwarm.Individuals(SearchSwarm.Index, 1) * SearchSwarm.Violations(:, 1);
-            % Increase Evalution Time
+            %% Increase Evalution Time
             obj.EvaluationTime = obj.EvaluationTime + obj.PopulationSize;
         end
 
         function EvaluateAdaptiveSwarm(obj, AdaptiveSwarm)
+            %% Find Best Valid Fitnesses
             MaxValidFitness = 0;
             for SwarmIndex = 1:obj.SwarmNumber
                 CurrentSearchSwarm = obj.SearchSwarms{1, SwarmIndex};
@@ -60,10 +61,10 @@ classdef mPSOAdaptive < mPSOBase
                 FeasibleSolutionIndex = CurrentSearchSwarm.Violations == 0;
                 FeasibleNumber = sum(FeasibleSolutionIndex);
                 if FeasibleNumber > 0
-                    % At least one feasible solution
+                    %% If At least one feasible solution
                     AdaptiveSwarm.Fitnesses(IndividualIndex, 1) = sum(CurrentSearchSwarm.Fitnesses(FeasibleSolutionIndex, 1)) / FeasibleNumber - FeasibleNumber;
                 else
-                    % No feasible solution
+                    %% Else No feasible solution
                     AdaptiveSwarm.Fitnesses(IndividualIndex, 1) = MaxValidFitness + sum(CurrentSearchSwarm.Violations) / obj.PopulationSize - obj.PopulationSize;
                 end
             end

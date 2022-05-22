@@ -31,7 +31,7 @@ classdef mPSOHybrid < mPSOFeasible
 
         function PSO(obj, HybridSwarmModel)
             %% Apply PSO to the Swarm
-            % Calculate Velocity
+            %% Calculate Hybrid Particle Velocity
             EvalutionTimeRatio = 1 - obj.EvaluationTime / obj.MaxEvaluationTime;
             CurrentShape = size(HybridSwarmModel.Velocities);
             CurrentInertia = obj.Inertia;
@@ -43,17 +43,17 @@ classdef mPSOHybrid < mPSOFeasible
             RandomSelect = rand(size(NonConstrainedVector)) < obj.Alpha * EvalutionTimeRatio;
             CombinedVector(RandomSelect) = CombinedVector(RandomSelect) + NonConstrainedVector(RandomSelect);
             HybridSwarmModel.Velocities(:, :) = obj.X * (CurrentInertia * HybridSwarmModel.Velocities + CombinedVector);
-            % Update Population
+            %% Update Population
             HybridSwarmModel.Individuals(:, :) = HybridSwarmModel.Individuals + HybridSwarmModel.Velocities;
         end
 
         function UpdatePbest(~, HybridSwarmModel)
             %% Intialize personal best: best individual of index-based specie
-            % Update feasible individuals
+            %% Update feasible individuals
             UpdateIndex = find((HybridSwarmModel.Violations == 0) & (HybridSwarmModel.Fitnesses < HybridSwarmModel.PbestFeasibleFitnesses));
             HybridSwarmModel.PbestFeasibleIndividuals(UpdateIndex, :) = HybridSwarmModel.Individuals(UpdateIndex, :);
             HybridSwarmModel.PbestFeasibleFitnesses(UpdateIndex, 1) = HybridSwarmModel.Fitnesses(UpdateIndex, 1);
-            % Update non-constrained individuals
+            %% Update non-constrained individuals
             UpdateIndex = find(HybridSwarmModel.Fitnesses < HybridSwarmModel.PbestFitnesses);
             HybridSwarmModel.PbestIndividuals(UpdateIndex, :) = HybridSwarmModel.Individuals(UpdateIndex, :);
             HybridSwarmModel.PbestFitnesses(UpdateIndex, 1) = HybridSwarmModel.Fitnesses(UpdateIndex, 1);
@@ -61,11 +61,11 @@ classdef mPSOHybrid < mPSOFeasible
         end
 
         function UpdateGbest(obj, HybridSwarmModel)
-            % Update non-constrained Gbest
+            %% Update non-constrained Gbest
             [HybridSwarmModel.GbestFitness(1, 1), GbestIndex] = min(HybridSwarmModel.PbestFitnesses(:, 1));
             HybridSwarmModel.GbestIndividual(1, :) = HybridSwarmModel.PbestIndividuals(GbestIndex, :);
             HybridSwarmModel.GbestViolation(:, 1) = HybridSwarmModel.PbestViolations(GbestIndex, 1);
-            % Update feasible Gbest
+            %% Update feasible Gbest
             [HybridSwarmModel.GbestFeasibleFitness(1, 1), GbestIndex] = min(HybridSwarmModel.PbestFeasibleFitnesses(:, 1));
             HybridSwarmModel.GbestFeasibleIndividual(1, :) = HybridSwarmModel.PbestFeasibleIndividuals(GbestIndex, :);
         end

@@ -11,9 +11,9 @@ function [FinalPopulation] = mPSO(CurrentSummary, ProblemNumber)
         GenerationCounter = GenerationCounter + 1;
         %% Algorithm Start
         for SwarmIndex = 1:mPSOInstance.SwarmNumber
-            % Apply PSO to CurrentSwarm, then update CurrentSwarm
+            %% Apply PSO to CurrentSwarm, then update CurrentSwarm
             mPSOInstance.UpdateSwarm(SwarmIndex);
-            % Check if evaluation times exceed
+            %% Check if evaluation times exceed
             if mPSOInstance.IsTerminal()
                 break;
             end
@@ -22,7 +22,7 @@ function [FinalPopulation] = mPSO(CurrentSummary, ProblemNumber)
         %% Do Exclusion or Update Adaptive Swarm
         mPSOInstance.GenerationFinish();
 
-        % Check if evaluation times exceed
+        %% Check if evaluation times exceed
         if mPSOInstance.IsTerminal()
             break;
         end
