@@ -8,7 +8,7 @@ MidLogNames = {'baseline_400000', 'mPSO_penalty_400000', 'mPSO_feasible_400000',
 HighLogNames = {'baseline_400000_dim', 'mPSO_penalty_400000_dim', 'mPSO_feasible_400000_dim', 'mPSO_hybrid_400000_dim'};
 LogNames = {LowLogNames, MidLogNames, HighLogNames};
 TitleNames = {'Baseline', 'mPSO-P', 'mPSO-F', 'mPSO-H'};
-ProblemNumbers = [1:18];
+ProblemNumbers = [5:10 12 14 15];
 %% Render Latex Table
 LatexTable = Utils.AverageTable(Caption, LogNames, TitleNames, ProblemNumbers);
 %% Print Table Content

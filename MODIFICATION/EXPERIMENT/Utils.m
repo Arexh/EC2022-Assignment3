@@ -310,17 +310,17 @@ classdef Utils
                 LatexTable = LatexTable + sprintf('    \\hline\n');
             end
 
-            LatexTable = LatexTable + sprintf('    \\multirow{2}{*}{Average} & PR');
-            for j = 1:AlgorithmNumber
-                LatexTable = LatexTable + sprintf(' & %.2f & %.2f & %.2f', mean(AveragePeakRatios(j, :, 1)), mean(AveragePeakRatios(j, :, 2)), mean(AveragePeakRatios(j, :, 3)));
-            end
-            LatexTable = LatexTable + sprintf(' \\\\\n');
-            LatexTable = LatexTable + sprintf('    & SR');
-            for j = 1:AlgorithmNumber
-                LatexTable = LatexTable + sprintf(' & %.2f & %.2f & %.2f', mean(AverageSuccessRatios(j, :, 1)), mean(AverageSuccessRatios(j, :, 2)), mean(AverageSuccessRatios(j, :, 3)));
-            end
-            LatexTable = LatexTable + sprintf(' \\\\\n');
-            LatexTable = LatexTable + sprintf('    \\hline\n');
+            % LatexTable = LatexTable + sprintf('    \\multirow{2}{*}{Average} & PR');
+            % for j = 1:AlgorithmNumber
+            %     LatexTable = LatexTable + sprintf(' & %.2f & %.2f & %.2f', mean(AveragePeakRatios(j, :, 1)), mean(AveragePeakRatios(j, :, 2)), mean(AveragePeakRatios(j, :, 3)));
+            % end
+            % LatexTable = LatexTable + sprintf(' \\\\\n');
+            % LatexTable = LatexTable + sprintf('    & SR');
+            % for j = 1:AlgorithmNumber
+            %     LatexTable = LatexTable + sprintf(' & %.2f & %.2f & %.2f', mean(AverageSuccessRatios(j, :, 1)), mean(AverageSuccessRatios(j, :, 2)), mean(AverageSuccessRatios(j, :, 3)));
+            % end
+            % LatexTable = LatexTable + sprintf(' \\\\\n');
+            % LatexTable = LatexTable + sprintf('    \\hline\n');
             LatexTable = LatexTable + sprintf('  \\end{tabular}\n');
             LatexTable = LatexTable + sprintf('\\end{table*}');
         end

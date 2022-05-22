@@ -5,7 +5,7 @@ addpath(genpath("benchmark"));
 RunNumber = 32;
 TStart = tic;
 IfParallel = true;
-EvaluationTimes = 'high';
+EvaluationTimes = 'low';
 addpath(genpath('modification'));
 %% Create Summary object to record
 CurrentSummary = Summary('mPSO_hybrid_test', RunNumber);
