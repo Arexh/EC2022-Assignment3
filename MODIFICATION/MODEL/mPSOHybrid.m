@@ -1,16 +1,10 @@
 classdef mPSOHybrid < mPSOFeasible
 
-    properties
-        %% Define Varibles
-        GbestShiftDistance; % Scalar
-    end
-
     properties (Constant = true)
         %% Constant Parameters
         C3 = 0.20;
         C4 = 0.20;
         Alpha = 0.4;
-        ConvergeLimit = 1e-2;
     end
 
     methods
@@ -18,7 +12,6 @@ classdef mPSOHybrid < mPSOFeasible
         function obj = mPSOHybrid(CurrentSummary, ProblemNumber)
             %% Initialization
             obj = obj@mPSOFeasible(CurrentSummary, ProblemNumber);
-            obj.GbestShiftDistance = inf;
         end
 
         function Initialization(obj)
@@ -42,10 +35,6 @@ classdef mPSOHybrid < mPSOFeasible
             EvalutionTimeRatio = 1 - obj.EvaluationTime / obj.MaxEvaluationTime;
             CurrentShape = size(HybridSwarmModel.Velocities);
             CurrentInertia = obj.Inertia;
-            % if obj.GbestShiftDistance < obj.ConvergeLimit
-            %     CurrentInertia = 0.2;
-            %     EvalutionTimeRatio = 0.2;
-            % end
             FeasibleVector = obj.C1 * rand(CurrentShape) .* (HybridSwarmModel.PbestFeasibleIndividuals - HybridSwarmModel.Individuals) ...
             + obj.C2 * rand(CurrentShape) .* (reshape(repmat(HybridSwarmModel.GbestFeasibleIndividual, CurrentShape(1), 1), CurrentShape) -  HybridSwarmModel.Individuals);
             NonConstrainedVector = obj.C3 * EvalutionTimeRatio * rand(CurrentShape) .* (HybridSwarmModel.PbestIndividuals - HybridSwarmModel.Individuals) ...
@@ -78,10 +67,6 @@ classdef mPSOHybrid < mPSOFeasible
             HybridSwarmModel.GbestViolation(:, 1) = HybridSwarmModel.PbestViolations(GbestIndex, 1);
             % Update feasible Gbest
             [HybridSwarmModel.GbestFeasibleFitness(1, 1), GbestIndex] = min(HybridSwarmModel.PbestFeasibleFitnesses(:, 1));
-            ShiftDistance = pdist2(HybridSwarmModel.GbestFeasibleIndividual(1, :), HybridSwarmModel.PbestFeasibleIndividuals(GbestIndex, :));
-            if ~ShiftDistance == 0
-                obj.GbestShiftDistance = ShiftDistance;
-            end
             HybridSwarmModel.GbestFeasibleIndividual(1, :) = HybridSwarmModel.PbestFeasibleIndividuals(GbestIndex, :);
         end
 
@@ -89,7 +74,7 @@ classdef mPSOHybrid < mPSOFeasible
             %% Exclusion
             obj.Exclusion();
             %% Record Current Peak Ratio
-            obj.RecordPeakRatio();
+            % obj.RecordPeakRatio();
             %% Increase Generation Counter
             obj.Generation = obj.Generation + 1;
         end

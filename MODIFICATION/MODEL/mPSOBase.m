@@ -39,7 +39,7 @@ classdef mPSOBase < handle
             obj.UpperBound = CurrentSummary.UpperBound{1, ProblemNumber}(1);
             obj.EvaluationTime = 0;
             obj.ExclusionLimit = 1e-9 * ((obj.UpperBound - obj.LowerBound) / ((obj.SwarmNumber) ^ (1 / obj.Dimension)));
-            obj.MaxEvaluationTime = CurrentSummary.MaxFitnessEvaluations(1, ProblemNumber);
+            obj.MaxEvaluationTime = CurrentSummary.MaxFitnessEvaluations;
             obj.ObjectiveFunction = CurrentSummary.ObjectiveFunctions{1, ProblemNumber};
             obj.ViolationFuncion = @sum_vio;
             obj.SearchSwarms = cell(1, obj.SwarmNumber);
@@ -157,7 +157,7 @@ classdef mPSOBase < handle
             %% Exclusion
             obj.Exclusion();
             %% Record Current Peak Ratio
-            obj.RecordPeakRatio();
+            % obj.RecordPeakRatio();
             %% Increase Generation Counter
             obj.Generation = obj.Generation + 1;
         end

@@ -5,21 +5,23 @@ addpath(genpath("benchmark"));
 RunNumber = 32;
 TStart = tic;
 IfParallel = true;
+EvaluationTimes = 'high';
 addpath(genpath('modification'));
 %% Create Summary object to record
-CurrentSummary = Summary('mPSO_hybrid_400000', RunNumber);
+CurrentSummary = Summary('mPSO_hybrid_test', RunNumber);
 CurrentSummary.InitLogFile();
 
 %% Main Function
 for ProblemIndex = 1:18
-    ProblemRun(ProblemIndex, CurrentSummary, IfParallel);
+    ProblemRun(ProblemIndex, CurrentSummary, IfParallel, EvaluationTimes);
 end
+
+disp(['Total time: ', num2str(toc(TStart))]);
 
 CurrentSummary.Finish();
 
-disp(['Total time: ', num2str(toc(TStart))]);
 %% Helper Funcion
-function ProblemRun(ProblemNumber, CurrentSummary, IfParallel)
+function ProblemRun(ProblemNumber, CurrentSummary, IfParallel, EvaluationTimes)
     function UpdateExperimentalResult(CurrentSummary, x)
         ProblemNum = x{1};
         RunCounter = x{2};
@@ -39,7 +41,16 @@ function ProblemRun(ProblemNumber, CurrentSummary, IfParallel)
     CurrentSummary.problem.func_num=ProblemNumber;
     CurrentSummary.problem.dim = Dims(ProblemNumber);
     CurrentSummary.problem.func = @(x) func(x, ProblemNumber);
-    CurrentSummary.problem.max_fes = floor(2000*CurrentSummary.problem.dim*sqrt(peakNum(ProblemNumber)));
+    if strcmp(EvaluationTimes, 'low')
+        CurrentSummary.problem.max_fes = floor(2000*CurrentSummary.problem.dim*sqrt(peakNum(ProblemNumber)));
+        CurrentSummary.MaxFitnessEvaluations = floor(2000*CurrentSummary.problem.dim*sqrt(peakNum(ProblemNumber)));
+    elseif strcmp(EvaluationTimes, 'mid')
+        CurrentSummary.problem.max_fes = 400000;
+        CurrentSummary.MaxFitnessEvaluations = 400000;
+    else
+        CurrentSummary.problem.max_fes = floor(400000*CurrentSummary.problem.dim);
+        CurrentSummary.MaxFitnessEvaluations = floor(400000*CurrentSummary.problem.dim);
+    end
     [CurrentSummary.problem.lower_bound, CurrentSummary.problem.upper_bound] = niching_func_bound_cons(ProblemNumber, CurrentSummary.problem.dim);
     CurrentSummary.problem.radius = radius(ProblemNumber);
     CurrentSummary.ProblemNumber = ProblemNumber;

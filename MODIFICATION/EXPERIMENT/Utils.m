@@ -264,6 +264,67 @@ classdef Utils
             LatexTable = LatexTable + sprintf('\\end{table*}');
         end
 
+        function LatexTable = AverageTable(Caption, LogNames, TitleNames, ProblemNumbers)
+            ProblemNumber = length(ProblemNumbers);
+            AlgorithmNumber = 4;
+            EvalutionTimeNumber = 3;
+            AveragePeakRatios = NaN(AlgorithmNumber, ProblemNumber, EvalutionTimeNumber);
+            AverageSuccessRatios = NaN(AlgorithmNumber, ProblemNumber, EvalutionTimeNumber);
+            for EvaluationTimeIndex = 1:EvalutionTimeNumber
+                CurrentLogNames = LogNames{EvaluationTimeIndex};
+                for AlgorithmIndex = 1:AlgorithmNumber
+                    CurrentSummary = Utils.GetSummary(CurrentLogNames{AlgorithmIndex});
+                    CurrentSummary.ReadDataFromFiles();
+                    for ProblemNumberIndex = 1:ProblemNumber
+                        CurrentProblemNumber = ProblemNumbers(ProblemNumberIndex);
+                        AveragePeakRatios(AlgorithmIndex, ProblemNumberIndex, EvaluationTimeIndex) = mean(reshape(CurrentSummary.FoundedPeaks(CurrentProblemNumber, :, :), 1, []));
+                        AverageSuccessRatios(AlgorithmIndex, ProblemNumberIndex, EvaluationTimeIndex) = mean(reshape(CurrentSummary.FoundedPeaks(CurrentProblemNumber, :, :), 1, []) == 1);
+                    end
+                end
+            end
+
+            %% Print Latex Table
+            LatexTable = "";
+            LatexTable = LatexTable + sprintf('\\begin{table*}[h]\n');
+            LatexTable = LatexTable + sprintf('  \\centering\n');
+            LatexTable = LatexTable + sprintf('  \\caption{%s}\n', Caption);
+            LatexTable = LatexTable + sprintf('  \\begin{tabular}{|c|c|ccc|ccc|ccc|ccc|}\n');
+            LatexTable = LatexTable + sprintf('    \\hline\n');
+            LatexTable = LatexTable + sprintf('    \\multicolumn{2}{|c|}{Algorithm} & \\multicolumn{3}{c|}{%s} & \\multicolumn{3}{c|}{%s} & \\multicolumn{3}{c|}{%s} & \\multicolumn{3}{c|}{%s} \\\\\n', TitleNames{1}, TitleNames{2}, TitleNames{3}, TitleNames{4});
+            LatexTable = LatexTable + sprintf('    \\hline\n');
+            LatexTable = LatexTable + sprintf('    \\multicolumn{2}{|c|}{Evaluation} & Low & Mid & High & Low & Mid & High & Low & Mid & High & Low & Mid & High \\\\\n');
+            LatexTable = LatexTable + sprintf('    \\hline\n');
+
+            for i = 1:ProblemNumber
+                CurrentProblemNumber = ProblemNumbers(i);
+                LatexTable = LatexTable + sprintf('    \\multirow{2}{*}{$F_{%d}$} & PR', CurrentProblemNumber);
+                for j = 1:AlgorithmNumber
+                    LatexTable = LatexTable + sprintf(' & %.2f & %.2f & %.2f', AveragePeakRatios(j, i, 1), AveragePeakRatios(j, i, 2), AveragePeakRatios(j, i, 3));
+                end
+                LatexTable = LatexTable + sprintf(' \\\\\n');
+                LatexTable = LatexTable + sprintf('    & SR');
+                for j = 1:AlgorithmNumber
+                    LatexTable = LatexTable + sprintf(' & %.2f & %.2f & %.2f', AverageSuccessRatios(j, i, 1), AverageSuccessRatios(j, i, 2), AverageSuccessRatios(j, i, 3));
+                end
+                LatexTable = LatexTable + sprintf(' \\\\\n');
+                LatexTable = LatexTable + sprintf('    \\hline\n');
+            end
+
+            LatexTable = LatexTable + sprintf('    \\multirow{2}{*}{Average} & PR');
+            for j = 1:AlgorithmNumber
+                LatexTable = LatexTable + sprintf(' & %.2f & %.2f & %.2f', mean(AveragePeakRatios(j, :, 1)), mean(AveragePeakRatios(j, :, 2)), mean(AveragePeakRatios(j, :, 3)));
+            end
+            LatexTable = LatexTable + sprintf(' \\\\\n');
+            LatexTable = LatexTable + sprintf('    & SR');
+            for j = 1:AlgorithmNumber
+                LatexTable = LatexTable + sprintf(' & %.2f & %.2f & %.2f', mean(AverageSuccessRatios(j, :, 1)), mean(AverageSuccessRatios(j, :, 2)), mean(AverageSuccessRatios(j, :, 3)));
+            end
+            LatexTable = LatexTable + sprintf(' \\\\\n');
+            LatexTable = LatexTable + sprintf('    \\hline\n');
+            LatexTable = LatexTable + sprintf('  \\end{tabular}\n');
+            LatexTable = LatexTable + sprintf('\\end{table*}');
+        end
+
         function WriteFile(OuputFile, Content)
             f = fopen(OuputFile, 'w');
             fprintf(f, '%s', Content);

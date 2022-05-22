@@ -9,7 +9,7 @@ function [population] = fNSDE_LSHADE44(CurrentSummary, func_num)%
 % problem.radius : radius to judge convergence
 func=CurrentSummary.ObjectiveFunctions{1, func_num};
 Dim=CurrentSummary.Dimensions(1, func_num);
-Max_Gen=CurrentSummary.MaxFitnessEvaluations(1, func_num);
+Max_Gen=CurrentSummary.MaxFitnessEvaluations;
 xmin=CurrentSummary.LowerBound{1, func_num}(1);
 xmax=CurrentSummary.UpperBound{1, func_num}(1);
 % Ninit for linearly population decreasing

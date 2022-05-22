@@ -85,7 +85,7 @@ classdef mPSOAdaptive < mPSOBase
             %% Exclusion
             obj.Exclusion();
             %% Record Current Peak Ratio
-            obj.RecordPeakRatio();
+            % obj.RecordPeakRatio();
             %% Increase Generation Counter
             obj.Generation = obj.Generation + 1;
         end
