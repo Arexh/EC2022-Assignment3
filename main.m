@@ -3,25 +3,38 @@ clc;
 addpath(genpath("benchmark")); 
 %% Parameters
 RunNumber = 32;
-TStart = tic;
 IfParallel = true;
-EvaluationTimes = 'low';
+EvaluationTimes = {'Low', 'Mid', 'High'};
 addpath(genpath('modification'));
-%% Create Summary object to record
-CurrentSummary = Summary('mPSO_hybrid_test', RunNumber);
-CurrentSummary.InitLogFile();
+AlgorithmNames = {'Baseline', 'mPSO-P', 'mPSO-A', 'mPSO-F', 'mPSO-H'};
 
-%% Main Function
-for ProblemIndex = 1:18
-    ProblemRun(ProblemIndex, CurrentSummary, IfParallel, EvaluationTimes);
+for EvalutionTimeIndex = 1:length(EvaluationTimes)
+    for AlgorithmIndex = 1:length(AlgorithmNames)
+    EvaluationTime = EvaluationTimes{EvalutionTimeIndex};
+        AlgorithmName = AlgorithmNames{AlgorithmIndex};
+        LogPathName = strrep([AlgorithmName, '-', EvaluationTime], '-', '_');
+        RunAlgorithm(LogPathName, AlgorithmName, EvaluationTime, RunNumber, IfParallel);
+    end
 end
 
-disp(['Total time: ', num2str(toc(TStart))]);
+function RunAlgorithm(LogPathName, AlgorithmName, EvaluationTime, RunNumber, IfParallel)
+    TStart = tic;
+    %% Create Summary object to record
+    CurrentSummary = Summary(LogPathName, RunNumber);
+    CurrentSummary.InitLogFile();
 
-CurrentSummary.Finish();
+    %% Main Function
+    for ProblemIndex = 1:18
+        ProblemRun(ProblemIndex, AlgorithmName, CurrentSummary, IfParallel, EvaluationTime);
+    end
+
+    disp(['Total time: ', num2str(toc(TStart))]);
+
+    CurrentSummary.Finish();
+end
 
 %% Helper Funcion
-function ProblemRun(ProblemNumber, CurrentSummary, IfParallel, EvaluationTimes)
+function ProblemRun(ProblemNumber, AlgorithmName, CurrentSummary, IfParallel, EvaluationTime)
     function UpdateExperimentalResult(CurrentSummary, x)
         ProblemNum = x{1};
         RunCounter = x{2};
@@ -42,10 +55,10 @@ function ProblemRun(ProblemNumber, CurrentSummary, IfParallel, EvaluationTimes)
     CurrentSummary.problem.func_num=ProblemNumber;
     CurrentSummary.problem.dim = Dims(ProblemNumber);
     CurrentSummary.problem.func = @(x) func(x, ProblemNumber);
-    if strcmp(EvaluationTimes, 'low')
+    if strcmpi(EvaluationTime, 'low')
         CurrentSummary.problem.max_fes = floor(2000*CurrentSummary.problem.dim*sqrt(peakNum(ProblemNumber)));
         CurrentSummary.MaxFitnessEvaluations = floor(2000*CurrentSummary.problem.dim*sqrt(peakNum(ProblemNumber)));
-    elseif strcmp(EvaluationTimes, 'mid')
+    elseif strcmpi(EvaluationTime, 'mid')
         CurrentSummary.problem.max_fes = 400000;
         CurrentSummary.MaxFitnessEvaluations = 400000;
     else
@@ -62,7 +75,11 @@ function ProblemRun(ProblemNumber, CurrentSummary, IfParallel, EvaluationTimes)
         afterEach(D, @(x) UpdateExperimentalResult(CurrentSummary, x));
         parfor RunNumber = 1:CurrentSummary.RunNumber
             rng('shuffle');
-            [population] = mPSO(CurrentSummary, ProblemNumber);
+            if strcmpi(AlgorithmName, 'baseline')
+                [population] = fNSDE_LSHADE44(CurrentSummary, ProblemNumber);
+            else
+                [population] = mPSO(AlgorithmName, CurrentSummary, ProblemNumber);
+            end
             Results = NaN(1, 5);
             for AccuricyIndex = 1:length(CurrentSummary.Accuracies)
                 [count, ~] = count_goptima(population, CurrentSummary.problem, CurrentSummary.Accuracies(AccuricyIndex));
@@ -79,7 +96,11 @@ function ProblemRun(ProblemNumber, CurrentSummary, IfParallel, EvaluationTimes)
     else
         %% Non-Parallel Evaluate
         for RunNumber = 1:CurrentSummary.RunNumber
-            [population] = mPSO(CurrentSummary, ProblemNumber);
+            if strcmpi(AlgorithmName, 'baseline')
+                [population] = fNSDE_LSHADE44(CurrentSummary, ProblemNumber);
+            else
+                [population] = mPSO(AlgorithmName, CurrentSummary, ProblemNumber);
+            end
             for AccuricyIndex = 1:length(CurrentSummary.Accuracies)
                 [count, ~] = count_goptima(population, CurrentSummary.problem, CurrentSummary.Accuracies(AccuricyIndex));
                 peak_num = CurrentSummary.PeakNumbers(1, ProblemNumber);

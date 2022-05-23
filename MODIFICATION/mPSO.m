@@ -1,7 +1,15 @@
-function [FinalPopulation] = mPSO(CurrentSummary, ProblemNumber)
+function [FinalPopulation] = mPSO(AlgorithmName, CurrentSummary, ProblemNumber)
     %% Create mPSO Instance
-    mPSOInstance = mPSOHybrid(CurrentSummary, ProblemNumber);
-
+    if strcmpi(AlgorithmName, 'mPSO-P')
+        mPSOInstance = mPSOPenalty(CurrentSummary, ProblemNumber);
+    elseif strcmpi(AlgorithmName, 'mPSO-A')
+        mPSOInstance = mPSOAdaptive(CurrentSummary, ProblemNumber);
+    elseif strcmpi(AlgorithmName, 'mPSO-F')
+        mPSOInstance = mPSOFeasible(CurrentSummary, ProblemNumber);
+    else
+        mPSOInstance = mPSOHybrid(CurrentSummary, ProblemNumber);
+    end
+    
     %% Initialize Swarms (both search and adaptive)
     mPSOInstance.Initialization();
 
