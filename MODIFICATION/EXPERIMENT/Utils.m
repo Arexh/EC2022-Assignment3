@@ -9,11 +9,13 @@ classdef Utils
             diary off;
         end
 
-        function LatexTable = CompareTwoResults(Caption, LogNames, TitleNames)
+        function LatexTable = CompareTwoResults(Caption, LogNames, TitleNames, LabelName)
             ProblemNumber = 18;
             PeakRatios = NaN(2, ProblemNumber, 5);
             SuccessRatios = NaN(2, ProblemNumber, 5);
             PeakRatioStat = NaN(ProblemNumber, 5);
+            AveragePeakRatios = NaN(2, 5);
+            AverageSuccessRatios = NaN(2, 5);
             CurrentSummarys = cell(1, 2);
             for LogIndex = 1:length(LogNames)
                 CurrentSummary = Utils.GetSummary(LogNames{LogIndex});
@@ -25,8 +27,11 @@ classdef Utils
                         SuccessRatios(LogIndex, ProblemNumberIndex, AccuracyIndex) = mean(CurrentSummary.FoundedPeaks(ProblemNumberIndex, :, AccuracyIndex) == 1);
                     end
                 end
+                for AccuracyIndex = 1:size(PeakRatios, 3)
+                    AveragePeakRatios(LogIndex, AccuracyIndex) = mean(CurrentSummary.FoundedPeaks(:, :, AccuracyIndex), 'all');
+                    AverageSuccessRatios(LogIndex, AccuracyIndex) = mean(CurrentSummary.FoundedPeaks(:, :, AccuracyIndex) == 1, 'all');
+                end
             end
-
             for ProblemNumberIndex = 1:size(PeakRatios, 2)
                 for AccuracyIndex = 1:size(PeakRatios, 3)
                     [PeakRatioStat(ProblemNumberIndex, AccuracyIndex), ~, ~, stat] = ttest2(CurrentSummarys{1, 1}.FoundedPeaks(ProblemNumberIndex, :, AccuracyIndex), CurrentSummarys{1, 2}.FoundedPeaks(ProblemNumberIndex, :, AccuracyIndex), 0.05, 'both');
@@ -39,7 +44,7 @@ classdef Utils
             LatexTable = LatexTable + sprintf('  \\scriptsize\n');
             LatexTable = LatexTable + sprintf('  \\caption{%s}\n', Caption);
             LatexTable = LatexTable + sprintf('  \\noindent\\makebox[\\textwidth]{\n');
-            LatexTable = LatexTable + sprintf('  \\begin{tabular}{|p{4.8mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|}\n');
+            LatexTable = LatexTable + sprintf('  \\begin{tabular}{|p{4.8mm}|p{4.6mm}|p{4.6mm}|p{4.6mm}|p{4.6mm}|p{4.6mm}|p{4.6mm}|p{4.6mm}|p{4.6mm}|p{4.6mm}|p{4.6mm}|p{4.6mm}|p{4.6mm}|p{4.6mm}|p{4.6mm}|p{4.6mm}|p{4.6mm}|p{4.6mm}|p{4.6mm}|p{4.6mm}|p{4.6mm}|}\n');
             for i = 1:3
                 LatexTable = LatexTable + sprintf('    \\hline\n');
                 LatexTable = LatexTable + sprintf('    \\multirow{3}{*}{$\\epsilon$}');
@@ -97,30 +102,24 @@ classdef Utils
                 end
             end
             LatexTable = LatexTable + sprintf('    \\hline\n');
-            LatexTable = LatexTable + sprintf('  \\end{tabular}\n');
-            LatexTable = LatexTable + sprintf('  }\n');
-
-            LatexTable = LatexTable + sprintf('  \\noindent\\makebox[\\textwidth]{\n');
-            LatexTable = LatexTable + sprintf('  \\begin{tabular}{|p{4.8mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|p{4.4mm}|}\n');
-
             for i = 4:4
                 LatexTable = LatexTable + sprintf('    \\multirow{3}{*}{$\\epsilon$}');
                 for j = (i-1)*5+1:(i-1)*5+3
                     LatexTable = LatexTable + sprintf(' & \\multicolumn{4}{c|}{$F_{%d}$}', j);
                 end
-                LatexTable = LatexTable + sprintf(' \\\\\n');
-                LatexTable = LatexTable + sprintf('\n    \\cline{2-13}\n');
+                LatexTable = LatexTable + sprintf(' & \\multicolumn{6}{c|}{Average} & \\multicolumn{2}{c|}{Comparasion} \\\\\n');
+                LatexTable = LatexTable + sprintf('\n    \\cline{2-21}\n');
                 LatexTable = LatexTable + sprintf('   ');
-                for j = 1:3
+                for j = 1:4
                     LatexTable = LatexTable + sprintf(' & \\multicolumn{2}{c|}{%s} & \\multicolumn{2}{c|}{%s}', TitleNames{1}, TitleNames{2});
                 end
-                LatexTable = LatexTable + sprintf(' \\\\\n');
-                LatexTable = LatexTable + sprintf('\n    \\cline{2-13}\n');
+                LatexTable = LatexTable + sprintf(' & PR & SR & \\multicolumn{2}{c|}{$-/\\sim/+$} \\\\\n');
+                LatexTable = LatexTable + sprintf('\n    \\cline{2-17}\\cline{20-21}\n');
                 LatexTable = LatexTable + sprintf('    ');
-                for j = 1:6
+                for j = 1:8
                     LatexTable = LatexTable + sprintf(' & \\multicolumn{1}{c|}{PR} & SR');
                 end
-                LatexTable = LatexTable + sprintf(' \\\\\n');
+                LatexTable = LatexTable + sprintf(' & Diff & Diff & \\multicolumn{1}{c|}{PR} & \\multicolumn{1}{c|}{SR} \\\\\n');
                 LatexTable = LatexTable + sprintf('    \\hline\n');
                 for j = 1:5
                     LatexTable = LatexTable + sprintf('    1E-%d', j);
@@ -155,7 +154,27 @@ classdef Utils
                             LatexTable = LatexTable + sprintf(' & %.2f', SuccessRatios(2, CurrentProblemIndex, j));
                         end
                     end
-                    LatexTable = LatexTable + sprintf(' \\\\\n');
+                    for k = 1:2
+                        LatexTable = LatexTable + sprintf(' & %.2f', AveragePeakRatios(k, j));
+                        LatexTable = LatexTable + sprintf(' & %.2f', AverageSuccessRatios(k, j));
+                    end
+                    if AveragePeakRatios(1, j) < AveragePeakRatios(2, j)
+                        LatexTable = LatexTable + sprintf(' & \\textbf{\\textcolor{customblue}{+%d\\%%}}', ceil(100 * ((AveragePeakRatios(2, j) - AveragePeakRatios(1, j)) / AveragePeakRatios(1, j))));
+                    else
+                        LatexTable = LatexTable + sprintf(' & \\textbf{\\textcolor{red}{-%d\\%%}}', ceil(100 * ((AveragePeakRatios(1, j) - AveragePeakRatios(2, j)) / AveragePeakRatios(2, j))));
+                    end
+                    if AverageSuccessRatios(1, j) < AverageSuccessRatios(2, j)
+                        LatexTable = LatexTable + sprintf(' & \\textbf{\\textcolor{customblue}{+%d\\%%}}', ceil(100 * ((AverageSuccessRatios(2, j) - AverageSuccessRatios(1, j)) / AverageSuccessRatios(1, j))));
+                    else
+                        LatexTable = LatexTable + sprintf(' & \\textbf{\\textcolor{red}{-%d\\%%}}', ceil(100 * ((AverageSuccessRatios(1, j) - AverageSuccessRatios(2, j)) / AverageSuccessRatios(2, j))));
+                    end
+                    LatexTable = LatexTable + sprintf(' & %d/%d/%d & %d/%d/%d \\\\\n', ...
+                    sum(PeakRatios(1, :, j) > PeakRatios(2, :, j)), ...
+                    sum(PeakRatios(1, :, j) == PeakRatios(2, :, j)), ...
+                    sum(PeakRatios(2, :, j) > PeakRatios(1, :, j)), ...
+                    sum(SuccessRatios(1, :, j) > SuccessRatios(2, :, j)), ...
+                    sum(SuccessRatios(1, :, j) == SuccessRatios(2, :, j)), ...
+                    sum(SuccessRatios(2, :, j) > SuccessRatios(1, :, j)));
                 end
             end
 
@@ -165,10 +184,11 @@ classdef Utils
             LatexTable = LatexTable + sprintf('    \\multicolumn{13}{l}{\\shortstack{$^\\dagger$A significant $t$ value of a two-tailed test with 62 degrees of freedom and $\\alpha=0.05$.}}\\\\\n');
             LatexTable = LatexTable + sprintf('  \\end{tabular}\n');
             LatexTable = LatexTable + sprintf('  }\n');
+            LatexTable = LatexTable + sprintf('  \\label{table:%s}\n', LabelName);
             LatexTable = LatexTable + sprintf('\\end{table*}');
         end
 
-        function LatexTable = CompleteTable(Caption, LogNames, TitleNames)
+        function LatexTable = CompleteTable(Caption, LogNames, TitleNames, LabelName)
             ProblemNumber = 18;
             PeakRatios = NaN(5, ProblemNumber, 5);
             SuccessRatios = NaN(5, ProblemNumber, 5);
@@ -261,10 +281,11 @@ classdef Utils
             LatexTable = LatexTable + sprintf('    \\multicolumn{23}{l}{\\shortstack{*Bold values indicate that algorithm has a higher SR or PR under the corresponding accuracy.}}\\\\\n');
             LatexTable = LatexTable + sprintf('  \\end{tabular}\n');
             LatexTable = LatexTable + sprintf('  }\n');
+            LatexTable = LatexTable + sprintf('  \\label{table:%s}\n', LabelName);
             LatexTable = LatexTable + sprintf('\\end{table*}');
         end
 
-        function LatexTable = AverageTable(Caption, LogNames, TitleNames, ProblemNumbers)
+        function LatexTable = AverageTable(Caption, LogNames, TitleNames, ProblemNumbers, LabelName)
             ProblemNumber = length(ProblemNumbers);
             AlgorithmNumber = 4;
             EvalutionTimeNumber = 3;
@@ -322,10 +343,11 @@ classdef Utils
             % LatexTable = LatexTable + sprintf(' \\\\\n');
             % LatexTable = LatexTable + sprintf('    \\hline\n');
             LatexTable = LatexTable + sprintf('  \\end{tabular}\n');
+            LatexTable = LatexTable + sprintf('  \\label{table:%s}\n', LabelName);
             LatexTable = LatexTable + sprintf('\\end{table*}');
         end
         
-        function LatexTable = CompareUnconstrained(Caption, LogNames, TitleNames)
+        function LatexTable = CompareUnconstrained(Caption, LogNames, TitleNames, LabelName)
             ProblemNumber = 18;
             PeakRatioIndex = 5;
             PeakRatios = NaN(2, ProblemNumber);
@@ -376,10 +398,11 @@ classdef Utils
                 LatexTable = LatexTable + sprintf('    \\hline\n');
             end
             LatexTable = LatexTable + sprintf('  \\end{tabular}\n');
+            LatexTable = LatexTable + sprintf('  \\label{table:%s}\n', LabelName);
             LatexTable = LatexTable + sprintf('\\end{table}');
         end
 
-        function LatexTable = CompareLowEvaluations(Caption, LogNames, TitleNames)
+        function LatexTable = CompareLowEvaluations(Caption, LogNames, TitleNames, LabelName)
             ProblemNumber = 18;
             AccuracyNumber = 5;
             AveragePeakRatios = NaN(5, 5);
@@ -438,6 +461,7 @@ classdef Utils
             end
             LatexTable = LatexTable + sprintf('    \\specialrule{.1em}{.05em}{.05em}\n');
             LatexTable = LatexTable + sprintf('  \\end{tabular}\n');
+            LatexTable = LatexTable + sprintf('  \\label{table:%s}\n', LabelName);
             LatexTable = LatexTable + sprintf('\\end{table}');
         end
 
