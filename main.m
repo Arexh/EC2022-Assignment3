@@ -7,6 +7,8 @@ IfParallel = true;
 EvaluationTimes = {'Low', 'Mid', 'High'};
 addpath(genpath('modification'));
 AlgorithmNames = {'Baseline', 'mPSO-P', 'mPSO-A', 'mPSO-F', 'mPSO-H'};
+%% Prestart Parfor
+parfor i = 1:8; end
 
 for EvalutionTimeIndex = 1:length(EvaluationTimes)
     for AlgorithmIndex = 1:length(AlgorithmNames)

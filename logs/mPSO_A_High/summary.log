@@ -1,0 +1,805 @@
+--------------------- Problem 1 ---------------------
+---- Accuracy: 0.100000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.640625
+PR Median: 1.000000
+PR Standard Deviation: 0.084703
+SR: 0.625000
+---- Accuracy: 0.100000 ----
+---- Accuracy: 0.010000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.640625
+PR Median: 1.000000
+PR Standard Deviation: 0.084703
+SR: 0.625000
+---- Accuracy: 0.010000 ----
+---- Accuracy: 0.001000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.640625
+PR Median: 1.000000
+PR Standard Deviation: 0.084703
+SR: 0.625000
+---- Accuracy: 0.001000 ----
+---- Accuracy: 0.000100 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.640625
+PR Median: 1.000000
+PR Standard Deviation: 0.084703
+SR: 0.625000
+---- Accuracy: 0.000100 ----
+---- Accuracy: 0.000010 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.640625
+PR Median: 1.000000
+PR Standard Deviation: 0.084703
+SR: 0.625000
+---- Accuracy: 0.000010 ----
+--------------------- Problem 1 ---------------------
+
+--------------------- Problem 2 ---------------------
+---- Accuracy: 0.100000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.843750
+PR Median: 1.000000
+PR Standard Deviation: 0.065213
+SR: 0.843750
+---- Accuracy: 0.100000 ----
+---- Accuracy: 0.010000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.843750
+PR Median: 1.000000
+PR Standard Deviation: 0.065213
+SR: 0.843750
+---- Accuracy: 0.010000 ----
+---- Accuracy: 0.001000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.812500
+PR Median: 1.000000
+PR Standard Deviation: 0.066410
+SR: 0.781250
+---- Accuracy: 0.001000 ----
+---- Accuracy: 0.000100 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.796875
+PR Median: 1.000000
+PR Standard Deviation: 0.066824
+SR: 0.750000
+---- Accuracy: 0.000100 ----
+---- Accuracy: 0.000010 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.796875
+PR Median: 1.000000
+PR Standard Deviation: 0.066824
+SR: 0.750000
+---- Accuracy: 0.000010 ----
+--------------------- Problem 2 ---------------------
+
+--------------------- Problem 3 ---------------------
+---- Accuracy: 0.100000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.484375
+PR Median: 0.625000
+PR Standard Deviation: 0.077721
+SR: 0.281250
+---- Accuracy: 0.100000 ----
+---- Accuracy: 0.010000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.460938
+PR Median: 0.500000
+PR Standard Deviation: 0.076224
+SR: 0.250000
+---- Accuracy: 0.010000 ----
+---- Accuracy: 0.001000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.453125
+PR Median: 0.500000
+PR Standard Deviation: 0.074830
+SR: 0.218750
+---- Accuracy: 0.001000 ----
+---- Accuracy: 0.000100 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.453125
+PR Median: 0.500000
+PR Standard Deviation: 0.074830
+SR: 0.218750
+---- Accuracy: 0.000100 ----
+---- Accuracy: 0.000010 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.453125
+PR Median: 0.500000
+PR Standard Deviation: 0.074830
+SR: 0.218750
+---- Accuracy: 0.000010 ----
+--------------------- Problem 3 ---------------------
+
+--------------------- Problem 4 ---------------------
+---- Accuracy: 0.100000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.875000
+PR Median: 1.000000
+PR Standard Deviation: 0.059399
+SR: 0.875000
+---- Accuracy: 0.100000 ----
+---- Accuracy: 0.010000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.843750
+PR Median: 1.000000
+PR Standard Deviation: 0.061227
+SR: 0.812500
+---- Accuracy: 0.010000 ----
+---- Accuracy: 0.001000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.843750
+PR Median: 1.000000
+PR Standard Deviation: 0.061227
+SR: 0.812500
+---- Accuracy: 0.001000 ----
+---- Accuracy: 0.000100 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.843750
+PR Median: 1.000000
+PR Standard Deviation: 0.061227
+SR: 0.812500
+---- Accuracy: 0.000100 ----
+---- Accuracy: 0.000010 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.843750
+PR Median: 1.000000
+PR Standard Deviation: 0.061227
+SR: 0.812500
+---- Accuracy: 0.000010 ----
+--------------------- Problem 4 ---------------------
+
+--------------------- Problem 5 ---------------------
+---- Accuracy: 0.100000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.578125
+PR Median: 0.750000
+PR Standard Deviation: 0.058531
+SR: 0.062500
+---- Accuracy: 0.100000 ----
+---- Accuracy: 0.010000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.562500
+PR Median: 0.750000
+PR Standard Deviation: 0.058329
+SR: 0.062500
+---- Accuracy: 0.010000 ----
+---- Accuracy: 0.001000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.558594
+PR Median: 0.750000
+PR Standard Deviation: 0.058862
+SR: 0.062500
+---- Accuracy: 0.001000 ----
+---- Accuracy: 0.000100 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.558594
+PR Median: 0.750000
+PR Standard Deviation: 0.058862
+SR: 0.062500
+---- Accuracy: 0.000100 ----
+---- Accuracy: 0.000010 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.558594
+PR Median: 0.750000
+PR Standard Deviation: 0.058862
+SR: 0.062500
+---- Accuracy: 0.000010 ----
+--------------------- Problem 5 ---------------------
+
+--------------------- Problem 6 ---------------------
+---- Accuracy: 0.100000 ----
+PR Best: 0.468750
+PR Worst: 0.000000
+PR Average: 0.151367
+PR Median: 0.031250
+PR Standard Deviation: 0.030809
+SR: 0.000000
+---- Accuracy: 0.100000 ----
+---- Accuracy: 0.010000 ----
+PR Best: 0.468750
+PR Worst: 0.000000
+PR Average: 0.151367
+PR Median: 0.031250
+PR Standard Deviation: 0.030809
+SR: 0.000000
+---- Accuracy: 0.010000 ----
+---- Accuracy: 0.001000 ----
+PR Best: 0.437500
+PR Worst: 0.000000
+PR Average: 0.142578
+PR Median: 0.031250
+PR Standard Deviation: 0.028788
+SR: 0.000000
+---- Accuracy: 0.001000 ----
+---- Accuracy: 0.000100 ----
+PR Best: 0.375000
+PR Worst: 0.000000
+PR Average: 0.130859
+PR Median: 0.031250
+PR Standard Deviation: 0.026528
+SR: 0.000000
+---- Accuracy: 0.000100 ----
+---- Accuracy: 0.000010 ----
+PR Best: 0.375000
+PR Worst: 0.000000
+PR Average: 0.116211
+PR Median: 0.031250
+PR Standard Deviation: 0.023863
+SR: 0.000000
+---- Accuracy: 0.000010 ----
+--------------------- Problem 6 ---------------------
+
+--------------------- Problem 7 ---------------------
+---- Accuracy: 0.100000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.890625
+PR Median: 1.000000
+PR Standard Deviation: 0.053762
+SR: 0.875000
+---- Accuracy: 0.100000 ----
+---- Accuracy: 0.010000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.859375
+PR Median: 1.000000
+PR Standard Deviation: 0.060385
+SR: 0.843750
+---- Accuracy: 0.010000 ----
+---- Accuracy: 0.001000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.796875
+PR Median: 1.000000
+PR Standard Deviation: 0.062939
+SR: 0.718750
+---- Accuracy: 0.001000 ----
+---- Accuracy: 0.000100 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.718750
+PR Median: 1.000000
+PR Standard Deviation: 0.070773
+SR: 0.625000
+---- Accuracy: 0.000100 ----
+---- Accuracy: 0.000010 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.531250
+PR Median: 0.500000
+PR Standard Deviation: 0.063252
+SR: 0.281250
+---- Accuracy: 0.000010 ----
+--------------------- Problem 7 ---------------------
+
+--------------------- Problem 8 ---------------------
+---- Accuracy: 0.100000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.554688
+PR Median: 0.625000
+PR Standard Deviation: 0.069637
+SR: 0.125000
+---- Accuracy: 0.100000 ----
+---- Accuracy: 0.010000 ----
+PR Best: 0.500000
+PR Worst: 0.000000
+PR Average: 0.250000
+PR Median: 0.250000
+PR Standard Deviation: 0.035939
+SR: 0.000000
+---- Accuracy: 0.010000 ----
+---- Accuracy: 0.001000 ----
+PR Best: 0.250000
+PR Worst: 0.000000
+PR Average: 0.105469
+PR Median: 0.125000
+PR Standard Deviation: 0.016940
+SR: 0.000000
+---- Accuracy: 0.001000 ----
+---- Accuracy: 0.000100 ----
+PR Best: 0.250000
+PR Worst: 0.000000
+PR Average: 0.050781
+PR Median: 0.000000
+PR Standard Deviation: 0.013586
+SR: 0.000000
+---- Accuracy: 0.000100 ----
+---- Accuracy: 0.000010 ----
+PR Best: 0.125000
+PR Worst: 0.000000
+PR Average: 0.015625
+PR Median: 0.000000
+PR Standard Deviation: 0.007425
+SR: 0.000000
+---- Accuracy: 0.000010 ----
+--------------------- Problem 8 ---------------------
+
+--------------------- Problem 9 ---------------------
+---- Accuracy: 0.100000 ----
+PR Best: 0.343750
+PR Worst: 0.000000
+PR Average: 0.179688
+PR Median: 0.156250
+PR Standard Deviation: 0.021234
+SR: 0.000000
+---- Accuracy: 0.100000 ----
+---- Accuracy: 0.010000 ----
+PR Best: 0.093750
+PR Worst: 0.000000
+PR Average: 0.021484
+PR Median: 0.000000
+PR Standard Deviation: 0.005689
+SR: 0.000000
+---- Accuracy: 0.010000 ----
+---- Accuracy: 0.001000 ----
+PR Best: 0.062500
+PR Worst: 0.000000
+PR Average: 0.005859
+PR Median: 0.000000
+PR Standard Deviation: 0.002602
+SR: 0.000000
+---- Accuracy: 0.001000 ----
+---- Accuracy: 0.000100 ----
+PR Best: 0.031250
+PR Worst: 0.000000
+PR Average: 0.002930
+PR Median: 0.000000
+PR Standard Deviation: 0.001636
+SR: 0.000000
+---- Accuracy: 0.000100 ----
+---- Accuracy: 0.000010 ----
+PR Best: 0.000000
+PR Worst: 0.000000
+PR Average: 0.000000
+PR Median: 0.000000
+PR Standard Deviation: 0.000000
+SR: 0.000000
+---- Accuracy: 0.000010 ----
+--------------------- Problem 9 ---------------------
+
+--------------------- Problem 10 ---------------------
+---- Accuracy: 0.100000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.637500
+PR Median: 0.900000
+PR Standard Deviation: 0.073335
+SR: 0.406250
+---- Accuracy: 0.100000 ----
+---- Accuracy: 0.010000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.637500
+PR Median: 0.900000
+PR Standard Deviation: 0.073335
+SR: 0.406250
+---- Accuracy: 0.010000 ----
+---- Accuracy: 0.001000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.637500
+PR Median: 0.900000
+PR Standard Deviation: 0.073335
+SR: 0.406250
+---- Accuracy: 0.001000 ----
+---- Accuracy: 0.000100 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.556250
+PR Median: 0.700000
+PR Standard Deviation: 0.067790
+SR: 0.062500
+---- Accuracy: 0.000100 ----
+---- Accuracy: 0.000010 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.487500
+PR Median: 0.600000
+PR Standard Deviation: 0.059864
+SR: 0.031250
+---- Accuracy: 0.000010 ----
+--------------------- Problem 10 ---------------------
+
+--------------------- Problem 11 ---------------------
+---- Accuracy: 0.100000 ----
+PR Best: 1.000000
+PR Worst: 0.750000
+PR Average: 0.992188
+PR Median: 1.000000
+PR Standard Deviation: 0.007812
+SR: 0.968750
+---- Accuracy: 0.100000 ----
+---- Accuracy: 0.010000 ----
+PR Best: 1.000000
+PR Worst: 0.750000
+PR Average: 0.984375
+PR Median: 1.000000
+PR Standard Deviation: 0.010869
+SR: 0.937500
+---- Accuracy: 0.010000 ----
+---- Accuracy: 0.001000 ----
+PR Best: 1.000000
+PR Worst: 0.750000
+PR Average: 0.984375
+PR Median: 1.000000
+PR Standard Deviation: 0.010869
+SR: 0.937500
+---- Accuracy: 0.001000 ----
+---- Accuracy: 0.000100 ----
+PR Best: 1.000000
+PR Worst: 0.750000
+PR Average: 0.984375
+PR Median: 1.000000
+PR Standard Deviation: 0.010869
+SR: 0.937500
+---- Accuracy: 0.000100 ----
+---- Accuracy: 0.000010 ----
+PR Best: 1.000000
+PR Worst: 0.750000
+PR Average: 0.984375
+PR Median: 1.000000
+PR Standard Deviation: 0.010869
+SR: 0.937500
+---- Accuracy: 0.000010 ----
+--------------------- Problem 11 ---------------------
+
+--------------------- Problem 12 ---------------------
+---- Accuracy: 0.100000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.523438
+PR Median: 0.625000
+PR Standard Deviation: 0.078865
+SR: 0.375000
+---- Accuracy: 0.100000 ----
+---- Accuracy: 0.010000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.523438
+PR Median: 0.625000
+PR Standard Deviation: 0.078865
+SR: 0.375000
+---- Accuracy: 0.010000 ----
+---- Accuracy: 0.001000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.523438
+PR Median: 0.625000
+PR Standard Deviation: 0.078865
+SR: 0.375000
+---- Accuracy: 0.001000 ----
+---- Accuracy: 0.000100 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.523438
+PR Median: 0.625000
+PR Standard Deviation: 0.078865
+SR: 0.375000
+---- Accuracy: 0.000100 ----
+---- Accuracy: 0.000010 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.523438
+PR Median: 0.625000
+PR Standard Deviation: 0.078865
+SR: 0.375000
+---- Accuracy: 0.000010 ----
+--------------------- Problem 12 ---------------------
+
+--------------------- Problem 13 ---------------------
+---- Accuracy: 0.100000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.906250
+PR Median: 1.000000
+PR Standard Deviation: 0.047293
+SR: 0.875000
+---- Accuracy: 0.100000 ----
+---- Accuracy: 0.010000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.906250
+PR Median: 1.000000
+PR Standard Deviation: 0.047293
+SR: 0.875000
+---- Accuracy: 0.010000 ----
+---- Accuracy: 0.001000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.859375
+PR Median: 1.000000
+PR Standard Deviation: 0.051364
+SR: 0.781250
+---- Accuracy: 0.001000 ----
+---- Accuracy: 0.000100 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.734375
+PR Median: 1.000000
+PR Standard Deviation: 0.054921
+SR: 0.531250
+---- Accuracy: 0.000100 ----
+---- Accuracy: 0.000010 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.734375
+PR Median: 1.000000
+PR Standard Deviation: 0.054921
+SR: 0.531250
+---- Accuracy: 0.000010 ----
+--------------------- Problem 13 ---------------------
+
+--------------------- Problem 14 ---------------------
+---- Accuracy: 0.100000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.700000
+PR Median: 0.850000
+PR Standard Deviation: 0.068096
+SR: 0.406250
+---- Accuracy: 0.100000 ----
+---- Accuracy: 0.010000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.653125
+PR Median: 0.750000
+PR Standard Deviation: 0.065375
+SR: 0.218750
+---- Accuracy: 0.010000 ----
+---- Accuracy: 0.001000 ----
+PR Best: 1.000000
+PR Worst: 0.000000
+PR Average: 0.512500
+PR Median: 0.600000
+PR Standard Deviation: 0.057458
+SR: 0.093750
+---- Accuracy: 0.001000 ----
+---- Accuracy: 0.000100 ----
+PR Best: 0.900000
+PR Worst: 0.000000
+PR Average: 0.446875
+PR Median: 0.500000
+PR Standard Deviation: 0.051780
+SR: 0.000000
+---- Accuracy: 0.000100 ----
+---- Accuracy: 0.000010 ----
+PR Best: 0.800000
+PR Worst: 0.000000
+PR Average: 0.437500
+PR Median: 0.500000
+PR Standard Deviation: 0.050352
+SR: 0.000000
+---- Accuracy: 0.000010 ----
+--------------------- Problem 14 ---------------------
+
+--------------------- Problem 15 ---------------------
+---- Accuracy: 0.100000 ----
+PR Best: 0.875000
+PR Worst: 0.000000
+PR Average: 0.488281
+PR Median: 0.562500
+PR Standard Deviation: 0.065058
+SR: 0.000000
+---- Accuracy: 0.100000 ----
+---- Accuracy: 0.010000 ----
+PR Best: 0.875000
+PR Worst: 0.000000
+PR Average: 0.429688
+PR Median: 0.500000
+PR Standard Deviation: 0.060694
+SR: 0.000000
+---- Accuracy: 0.010000 ----
+---- Accuracy: 0.001000 ----
+PR Best: 0.875000
+PR Worst: 0.000000
+PR Average: 0.339844
+PR Median: 0.375000
+PR Standard Deviation: 0.050275
+SR: 0.000000
+---- Accuracy: 0.001000 ----
+---- Accuracy: 0.000100 ----
+PR Best: 0.500000
+PR Worst: 0.000000
+PR Average: 0.199219
+PR Median: 0.250000
+PR Standard Deviation: 0.031680
+SR: 0.000000
+---- Accuracy: 0.000100 ----
+---- Accuracy: 0.000010 ----
+PR Best: 0.375000
+PR Worst: 0.000000
+PR Average: 0.082031
+PR Median: 0.125000
+PR Standard Deviation: 0.016469
+SR: 0.000000
+---- Accuracy: 0.000010 ----
+--------------------- Problem 15 ---------------------
+
+--------------------- Problem 16 ---------------------
+---- Accuracy: 0.100000 ----
+PR Best: 0.625000
+PR Worst: 0.000000
+PR Average: 0.324219
+PR Median: 0.333333
+PR Standard Deviation: 0.034484
+SR: 0.000000
+---- Accuracy: 0.100000 ----
+---- Accuracy: 0.010000 ----
+PR Best: 0.541667
+PR Worst: 0.000000
+PR Average: 0.226562
+PR Median: 0.250000
+PR Standard Deviation: 0.026586
+SR: 0.000000
+---- Accuracy: 0.010000 ----
+---- Accuracy: 0.001000 ----
+PR Best: 0.333333
+PR Worst: 0.000000
+PR Average: 0.162760
+PR Median: 0.208333
+PR Standard Deviation: 0.019021
+SR: 0.000000
+---- Accuracy: 0.001000 ----
+---- Accuracy: 0.000100 ----
+PR Best: 0.291667
+PR Worst: 0.000000
+PR Average: 0.092448
+PR Median: 0.125000
+PR Standard Deviation: 0.011793
+SR: 0.000000
+---- Accuracy: 0.000100 ----
+---- Accuracy: 0.000010 ----
+PR Best: 0.125000
+PR Worst: 0.000000
+PR Average: 0.062500
+PR Median: 0.041667
+PR Standard Deviation: 0.009354
+SR: 0.000000
+---- Accuracy: 0.000010 ----
+--------------------- Problem 16 ---------------------
+
+--------------------- Problem 17 ---------------------
+---- Accuracy: 0.100000 ----
+PR Best: 0.375000
+PR Worst: 0.000000
+PR Average: 0.175781
+PR Median: 0.187500
+PR Standard Deviation: 0.021636
+SR: 0.000000
+---- Accuracy: 0.100000 ----
+---- Accuracy: 0.010000 ----
+PR Best: 0.312500
+PR Worst: 0.000000
+PR Average: 0.144531
+PR Median: 0.125000
+PR Standard Deviation: 0.018496
+SR: 0.000000
+---- Accuracy: 0.010000 ----
+---- Accuracy: 0.001000 ----
+PR Best: 0.250000
+PR Worst: 0.000000
+PR Average: 0.085938
+PR Median: 0.062500
+PR Standard Deviation: 0.014514
+SR: 0.000000
+---- Accuracy: 0.001000 ----
+---- Accuracy: 0.000100 ----
+PR Best: 0.062500
+PR Worst: 0.000000
+PR Average: 0.027344
+PR Median: 0.000000
+PR Standard Deviation: 0.005569
+SR: 0.000000
+---- Accuracy: 0.000100 ----
+---- Accuracy: 0.000010 ----
+PR Best: 0.062500
+PR Worst: 0.000000
+PR Average: 0.005859
+PR Median: 0.000000
+PR Standard Deviation: 0.003272
+SR: 0.000000
+---- Accuracy: 0.000010 ----
+--------------------- Problem 17 ---------------------
+
+--------------------- Problem 18 ---------------------
+---- Accuracy: 0.100000 ----
+PR Best: 0.062500
+PR Worst: 0.000000
+PR Average: 0.007812
+PR Median: 0.000000
+PR Standard Deviation: 0.002530
+SR: 0.000000
+---- Accuracy: 0.100000 ----
+---- Accuracy: 0.010000 ----
+PR Best: 0.062500
+PR Worst: 0.000000
+PR Average: 0.006836
+PR Median: 0.000000
+PR Standard Deviation: 0.002320
+SR: 0.000000
+---- Accuracy: 0.010000 ----
+---- Accuracy: 0.001000 ----
+PR Best: 0.031250
+PR Worst: 0.000000
+PR Average: 0.001953
+PR Median: 0.000000
+PR Standard Deviation: 0.001163
+SR: 0.000000
+---- Accuracy: 0.001000 ----
+---- Accuracy: 0.000100 ----
+PR Best: 0.000000
+PR Worst: 0.000000
+PR Average: 0.000000
+PR Median: 0.000000
+PR Standard Deviation: 0.000000
+SR: 0.000000
+---- Accuracy: 0.000100 ----
+---- Accuracy: 0.000010 ----
+PR Best: 0.000000
+PR Worst: 0.000000
+PR Average: 0.000000
+PR Median: 0.000000
+PR Standard Deviation: 0.000000
+SR: 0.000000
+---- Accuracy: 0.000010 ----
+--------------------- Problem 18 ---------------------
+
+--------------------- Stats ---------------------
+Problem: 1, Average Peak Ratio: 0.640625
+Problem: 2, Average Peak Ratio: 0.818750
+Problem: 3, Average Peak Ratio: 0.460938
+Problem: 4, Average Peak Ratio: 0.850000
+Problem: 5, Average Peak Ratio: 0.563281
+Problem: 6, Average Peak Ratio: 0.138477
+Problem: 7, Average Peak Ratio: 0.759375
+Problem: 8, Average Peak Ratio: 0.195312
+Problem: 9, Average Peak Ratio: 0.041992
+Problem: 10, Average Peak Ratio: 0.591250
+Problem: 11, Average Peak Ratio: 0.985938
+Problem: 12, Average Peak Ratio: 0.523438
+Problem: 13, Average Peak Ratio: 0.828125
+Problem: 14, Average Peak Ratio: 0.550000
+Problem: 15, Average Peak Ratio: 0.307812
+Problem: 16, Average Peak Ratio: 0.173698
+Problem: 17, Average Peak Ratio: 0.087891
+Problem: 18, Average Peak Ratio: 0.003320
+Overall Average Peak Ratio: 0.473346
+Accuracy: 0.100000, Average Peak Ratio: 0.552984
+Accuracy: 0.010000, Average Peak Ratio: 0.508116
+Accuracy: 0.001000, Average Peak Ratio: 0.470392
+Accuracy: 0.000100, Average Peak Ratio: 0.431145
+Accuracy: 0.000010, Average Peak Ratio: 0.404091
+Accuracy: 0.100000, Average Success Ratio: 0.373264
+Accuracy: 0.010000, Average Success Ratio: 0.347222
+Accuracy: 0.001000, Average Success Ratio: 0.322917
+Accuracy: 0.000100, Average Success Ratio: 0.277778
+Accuracy: 0.000010, Average Success Ratio: 0.256944
+--------------------- Stats ---------------------
