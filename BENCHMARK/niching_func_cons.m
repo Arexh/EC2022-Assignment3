@@ -180,18 +180,20 @@ end %select
 %conVio = sum_vio(h,g,eps_viol,NP);
 g(g<1e-10) = 0;
 %contains;
-
-    function [heavisideresult,x]=heaviside(x,varargin)
+function [heavisideresult,x]=heaviside(x,varargin)
     heavisideresult=[];
+    % if(x>=0.0d0)
+    %     heavisideresult=1;
+    % else
+    %     heavisideresult=0;
+    % end
+    % end %function
+    tmp = x>=0.0d0;
+    heavisideresult(tmp) = 1;
+    heavisideresult(~tmp) = 0;
+    heavisideresult=heavisideresult';
 
-
-    if(x>=0.0d0)
-        heavisideresult=1;
-    else
-        heavisideresult=0;
-    end
-    end %function
-
+end
 end %subroutine niching_func_cons
 
 
