@@ -1,12 +1,15 @@
 %%
 clc;
 addpath(genpath("benchmark")); 
+addpath(genpath('modification'));
 %% Parameters
 RunNumber = 32;
 IfParallel = true;
-EvaluationTimes = {'Low', 'Mid', 'High'};
-addpath(genpath('modification'));
-AlgorithmNames = {'Baseline', 'mPSO-P', 'mPSO-A', 'mPSO-F', 'mPSO-H'};
+EvaluationTimes = {'Mid'};
+AlgorithmNames = {'mPSO-H'};
+%% To Run All Experiments, Use These Two Lines
+% EvaluationTimes = {'Low', 'Mid', 'High'};
+% AlgorithmNames = {'Baseline', 'mPSO-P', 'mPSO-A', 'mPSO-F', 'mPSO-H'};
 %% Prestart Parfor
 parfor i = 1:8; end
 
